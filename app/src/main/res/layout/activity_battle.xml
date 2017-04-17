@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutBattleInterface"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.01">
+
+        <ImageView
+            android:id="@+id/playerImg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_weight="0.01"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/player_placeholder" />
+
+        <LinearLayout
+            android:id="@+id/layoutPlayerInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/playerImg"
+            android:layout_weight="0.01"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/playerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.01"
+                android:text="@string/player_name"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/playerHP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.01"
+                android:text="HP 10/10"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonDefend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="0.01"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/buttonEndTurn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/buttonRun"
+            android:layout_toEndOf="@+id/buttonDefend"
+            android:text="@string/button_end" />
+
+        <Button
+            android:id="@+id/buttonRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/buttonEndTurn"
+            android:text="@string/button_run" />
+
+        <Button
+            android:id="@+id/buttonHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/buttonRun"
+            android:text="@string/button_help" />
+
+
+
+    </RelativeLayout>
+
+</LinearLayout>

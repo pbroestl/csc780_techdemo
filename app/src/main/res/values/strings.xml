@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">NEET Story Bro</string>
+    <string name="text_title">Let\'s Gesture… TBD</string>
+    <string name="text_tap_to_start">Tap to start!</string>
+
+    <string name="button_map_select_1">Easy</string>
+    <string name="button_map_select_2">Medium</string>
+    <string name="button_map_select_3">Hard</string>
+
+    <string name="player_name">Player Name</string>
+    <string name="text_hp">HP </string>
+    <string name="text_ap">AP </string>
+    <string name="button_end">End turn</string>
+    <string name="button_run">Run away</string>
+    <string name="button_help">Help</string>
+
+</resources>
