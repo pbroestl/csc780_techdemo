@@ -42,13 +42,6 @@ public class TitleScreenActivity extends Activity {
                 return true;
             }
         });
-
-//        FrameLayout frameLayout;
-//        frameLayout = (FrameLayout) findViewById(R.id.grid);
-//        Log.v(TAG, "Width: " + frameLayout.getWidth());
-
-//        GridFourView grid = new GridFourView(this.getApplicationContext(), this);
-//        grid.drawGrid();
     }
 
     @Override

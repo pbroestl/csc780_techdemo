@@ -20,6 +20,10 @@
         <activity android:name="com.csc780.eppb.tbd.MapSelectActivity" android:screenOrientation="landscape">
 
         </activity>
+
+        <activity android:name="com.csc780.eppb.tbd.BattleActivity" android:screenOrientation="landscape">
+
+        </activity>
     </application>
 
 </manifest>
