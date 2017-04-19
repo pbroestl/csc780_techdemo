@@ -26,6 +26,7 @@ public class MapSelectActivity extends Activity {
         final Button mMapEasy = (Button) findViewById(R.id.selectEasy);
         final Button mMapMed = (Button) findViewById(R.id.selectMed);
         final Button mMapHard = (Button) findViewById(R.id.selectHard);
+        final Button mTestGesture = (Button) findViewById(R.id.testGesture);
 
         mMapEasy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +50,15 @@ public class MapSelectActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, BattleActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
+
+        mTestGesture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, GestureActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
