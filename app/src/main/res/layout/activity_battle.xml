@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layoutBattleInterface"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:weightSum="1">
 
+    <include
+        layout="@layout/fragment_help"
+        android:visibility="gone" />
+
     <com.csc780.eppb.tbd.CurrentPlayerInfo
         android:id="@+id/playerInfo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/buttonDefend"
@@ -17,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_weight="0.01"
-            android:text="Button" />
+            android:text="Button"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonEndTurn"
@@ -42,7 +48,9 @@
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/buttonRun"
             android:text="@string/button_help" />
+
     </com.csc780.eppb.tbd.CurrentPlayerInfo>
+
 
     <!--This section has been moved to player_info.xml. Keeping here for now-->
     <!--<RelativeLayout-->

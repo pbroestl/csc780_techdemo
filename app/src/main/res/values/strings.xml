@@ -14,4 +14,18 @@
     <string name="button_run">Run away</string>
     <string name="button_help">Help</string>
 
+    <string-array name="list_spells">
+        <item>Fire</item>
+        <item>Fire+</item>
+        <item>Fire++</item>
+        <item>Fire#</item>
+        <item>Water</item>
+        <item>Water+</item>
+        <item>Water++</item>
+        <item>Water#</item>
+        <item>Lightning</item>
+        <item>Lightning+</item>
+        <item>Lightning++</item>
+        <item>Lightning#</item>
+    </string-array>
 </resources>
