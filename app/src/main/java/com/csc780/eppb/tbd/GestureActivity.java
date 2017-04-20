@@ -62,6 +62,10 @@ public class GestureActivity extends AppCompatActivity implements OnGesturePerfo
         float[] points = gesture.getStrokes().get(0).points ;
 
         float averageSlope = 0.0f;
+
+        short totalPoints = 0;
+        short horizontalPoints = 0;
+
         boolean firstPass = true;
         for (int i = 0; i <points.length - 4 ; i += 2 ){
             float x1 = points[i];
@@ -71,19 +75,17 @@ public class GestureActivity extends AppCompatActivity implements OnGesturePerfo
 
             float slope = Math.abs((y2 - y1 )/(x2 - x1));
 
-            if (firstPass){
-                averageSlope =  slope;
-                firstPass = false;
-            } else {
-                averageSlope = (averageSlope + slope)/ 2 ;
-            }
+            if(slope <= 1.0f )
+                horizontalPoints++;
 
+            totalPoints++;
             // String coordinates = "x : " + points[i] + "  Y  : " + points[i+1];
-            //  Log.v("NEET", coordinates);
-            //  Log.v("NEET", Double.toString(averageSlope));
+            // Log.v("NEET", coordinates);
+            Log.v("NEET", Short.toString(horizontalPoints));
+             Log.v("NEET", Float.toString(totalPoints));
         }
 
-        if(averageSlope > 1.0) {
+        if((totalPoints - horizontalPoints) > horizontalPoints) {
             return "Vertical";
         } else {
             return " Horizontal";
