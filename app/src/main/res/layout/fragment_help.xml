@@ -12,10 +12,15 @@
         android:layout_height="match_parent"
         android:text="List of Spells" />
 
-    <ListView android:id="@id/android:list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/spellList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
+        android:layout_height="match_parent" />
+
+    <!--<ListView android:id="@id/android:list"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:drawSelectorOnTop="false"/>-->
 
 </LinearLayout>

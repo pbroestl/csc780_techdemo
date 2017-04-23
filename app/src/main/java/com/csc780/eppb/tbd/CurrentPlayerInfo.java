@@ -1,6 +1,7 @@
 package com.csc780.eppb.tbd;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,6 +39,8 @@ public class CurrentPlayerInfo extends RelativeLayout {
         mNameTextView.setText(player.getName());
         mHpTextView.setText(player.getHealth() + "/" + Player.MAX_HEALTH);
         mPictureImageView.setImageDrawable(player.getPicture());
+        mNameTextView.setTextColor(Color.RED);
+        mHpTextView.setTextColor(Color.RED);
     }
 
     private void updateHealth() {

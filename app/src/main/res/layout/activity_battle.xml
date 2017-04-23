@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layoutBattleInterface"
     android:layout_width="fill_parent"
@@ -15,7 +15,6 @@
         android:id="@+id/playerInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <Button
             android:id="@+id/buttonDefend"
             android:layout_width="wrap_content"
@@ -94,4 +93,4 @@
         <!--</LinearLayout>-->
     <!--</RelativeLayout>-->
 
-</LinearLayout>
+</RelativeLayout>
