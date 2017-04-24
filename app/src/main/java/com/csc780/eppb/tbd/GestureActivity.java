@@ -4,6 +4,7 @@ package com.csc780.eppb.tbd;
  * Created by Paul  on 4/18/2017.
  */
 
+import android.app.Service;
 import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
@@ -12,16 +13,22 @@ import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.GesturePoint;
 import android.gesture.GestureStroke;
 import android.gesture.Prediction;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 import java.util.ArrayList;
 
-public class GestureActivity extends AppCompatActivity implements OnGesturePerformedListener {
+public class GestureActivity extends AndroidApplication implements OnGesturePerformedListener{
 
     private GestureLibrary boiSkillz;
     private GestureLibrary grilSkillz;
@@ -30,10 +37,18 @@ public class GestureActivity extends AppCompatActivity implements OnGesturePerfo
 
     private GestureOverlayView gestureView;
 
+    private MyGdxGame game;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestures);
+
+        game = new MyGdxGame();
+
+        TextView text= new TextView(this);
+        text.setText ("Why does this work?");
+        text.setTextSize(50.0f);
 
         boiSkillz =
                 GestureLibraries.fromRawResource(this, R.raw.gestures);
@@ -53,12 +68,22 @@ public class GestureActivity extends AppCompatActivity implements OnGesturePerfo
                 (GestureOverlayView) findViewById(R.id.gestureOverlay);
         gestureView.setGestureStrokeAngleThreshold(90.0f);
         gestureView.setGestureStrokeLengthThreshold(100.0f);
+        gestureView.setGestureColor(Color.BLUE);
 
         gestureView.addOnGesturePerformedListener(this);
+
+        //AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+        View gameView = initializeForView(game);
+
+          gestureView.addView(text);
+          gestureView.addView(gameView, 0);
 
     }
 
     private String lineOrientationCheck ( Gesture gesture) {
+        float[] color = {0,1,0,1};
+        float[] color2 = {0,0,1,1};
+
         float[] points = gesture.getStrokes().get(0).points ;
 
         float averageSlope = 0.0f;
@@ -86,8 +111,10 @@ public class GestureActivity extends AppCompatActivity implements OnGesturePerfo
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
+            game.setColor(color);
             return "Vertical";
         } else {
+            game.setColor(color2);
             return " Horizontal";
         }
     }

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.owner.gesturematching.GesturesActivity">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    tools:context="com.csc780.eppb.tbd.GestureActivity">
 
     <android.gesture.GestureOverlayView
-        android:layout_width="368dp"
-        android:layout_height="576dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/gestureOverlay"
         android:layout_gravity="center_horizontal"
         android:gestureStrokeType = "single"
@@ -18,4 +19,4 @@
         tools:layout_editor_absoluteX="8dp">
     </android.gesture.GestureOverlayView>
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

@@ -24,6 +24,9 @@ public class BattleActivity extends AndroidApplication {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         initialize(new MyGdxGame(), config);
+
+
+
 //        setContentView(R.layout.activity_battle);
 //
 //        mDifficulty = getIntent().getExtras().getString("difficulty");

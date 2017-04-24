@@ -25,7 +25,7 @@
 
         </activity>
 
-        <activity android:name="com.csc780.eppb.tbd.GestureActivity" android:screenOrientation="portrait">
+        <activity android:name="com.csc780.eppb.tbd.GestureActivity" android:screenOrientation="landscape">
 
         </activity>
     </application>
