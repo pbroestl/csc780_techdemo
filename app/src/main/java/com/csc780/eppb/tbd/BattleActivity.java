@@ -7,11 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+
 /**
  * Created by Elaine on 4/17/2017.
  */
 
-public class BattleActivity extends Activity {
+public class BattleActivity extends AndroidApplication {
 
     private static final String TAG = "Battle Activity";
     private String mDifficulty;
@@ -19,19 +22,21 @@ public class BattleActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_battle);
-
-        mDifficulty = getIntent().getExtras().getString("difficulty");
-        Log.d(TAG, "You selected difficulty " + mDifficulty);
-        setMap(mDifficulty);
-
-        final Button mHelpButton = (Button) findViewById(R.id.buttonHelp);
-        mHelpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showHelpFragmentDialog();
-            }
-        });
+        AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+        initialize(new MyGdxGame(), config);
+//        setContentView(R.layout.activity_battle);
+//
+//        mDifficulty = getIntent().getExtras().getString("difficulty");
+//        Log.d(TAG, "You selected difficulty " + mDifficulty);
+//        setMap(mDifficulty);
+//
+//        final Button mHelpButton = (Button) findViewById(R.id.buttonHelp);
+//        mHelpButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showHelpFragmentDialog();
+//            }
+//        });
     }
 
     @Override
