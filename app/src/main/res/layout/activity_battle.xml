@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.csc780.eppb.tbd.BattleLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layoutBattleInterface"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:weightSum="1">
 
@@ -11,44 +10,42 @@
         layout="@layout/fragment_help"
         android:visibility="gone" />
 
-    <com.csc780.eppb.tbd.CurrentPlayerInfo
-        android:id="@+id/playerInfo"
+    <include layout="@layout/activity_gestures" />
+
+    <Button
+        android:id="@+id/buttonDefend"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/buttonDefend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_weight="0.01"
-            android:text="Button"
-            android:visibility="gone" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.01"
+        android:text="Button"
+        android:visibility="gone" />
 
-        <Button
-            android:id="@+id/buttonEndTurn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/buttonRun"
-            android:layout_toEndOf="@+id/buttonDefend"
-            android:text="@string/button_end" />
+    <Button
+        android:id="@+id/buttonEndTurn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/buttonRun"
+        android:layout_toEndOf="@+id/buttonDefend"
+        android:text="@string/button_end" />
 
-        <Button
-            android:id="@+id/buttonRun"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/buttonEndTurn"
-            android:text="@string/button_run" />
+    <Button
+        android:id="@+id/buttonRun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/buttonEndTurn"
+        android:text="@string/button_run" />
 
-        <Button
-            android:id="@+id/buttonHelp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/buttonRun"
-            android:text="@string/button_help" />
+    <Button
+        android:id="@+id/buttonHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/buttonRun"
+        android:text="@string/button_help" />
 
-    </com.csc780.eppb.tbd.CurrentPlayerInfo>
+</com.csc780.eppb.tbd.BattleLayout>
 
 
     <!--This section has been moved to player_info.xml. Keeping here for now-->
@@ -92,5 +89,3 @@
 
         <!--</LinearLayout>-->
     <!--</RelativeLayout>-->
-
-</RelativeLayout>

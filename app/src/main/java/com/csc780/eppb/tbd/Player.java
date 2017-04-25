@@ -1,7 +1,6 @@
 package com.csc780.eppb.tbd;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
 /**
