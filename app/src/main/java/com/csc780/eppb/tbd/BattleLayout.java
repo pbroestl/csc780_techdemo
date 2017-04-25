@@ -1,6 +1,7 @@
 package com.csc780.eppb.tbd;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,19 +12,19 @@ import android.widget.TextView;
  * Created by Elaine on 4/17/2017.
  */
 
-public class CurrentPlayerInfo extends RelativeLayout {
+public class BattleLayout extends RelativeLayout {
 
     View mRootView;
     TextView mNameTextView;
     TextView mHpTextView;
     ImageView mPictureImageView;
 
-    public CurrentPlayerInfo(Context context) {
+    public BattleLayout(Context context) {
         super(context);
         init(context);
     }
 
-    public CurrentPlayerInfo(Context context, AttributeSet attrs) {
+    public BattleLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
@@ -36,7 +37,9 @@ public class CurrentPlayerInfo extends RelativeLayout {
 
         Player player = new Player(context);
         mNameTextView.setText(player.getName());
+        mNameTextView.setTextColor(Color.WHITE);
         mHpTextView.setText(player.getHealth() + "/" + Player.MAX_HEALTH);
+        mHpTextView.setTextColor(Color.WHITE);
         mPictureImageView.setImageDrawable(player.getPicture());
     }
 
