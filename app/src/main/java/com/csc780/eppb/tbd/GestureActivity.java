@@ -37,14 +37,14 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
 
     private GestureOverlayView gestureView;
 
-    private MyGdxGame game;
+    private NeetGame game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestures);
 
-        game = new MyGdxGame();
+        game = new NeetGame();
 
         TextView text= new TextView(this);
         text.setText ("Why does this work?");
@@ -82,7 +82,7 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
 
     private String lineOrientationCheck ( Gesture gesture) {
         float[] color = {0,1,0,1};
-        float[] color2 = {0,0,1,1};
+        float[] color2 = {0,1,1,1};
 
         float[] points = gesture.getStrokes().get(0).points ;
 
@@ -135,15 +135,16 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
 
                 if (predictions.get(0).name.toUpperCase().equals("LINE")) {
                     String lineGestureType = lineOrientationCheck(gesture);
-                    Toast.makeText(getApplicationContext(), lineGestureType, Toast.LENGTH_SHORT).show();
+             //       Toast.makeText(getApplicationContext(), lineGestureType, Toast.LENGTH_SHORT).show();
+                    game.addCombo();
 
                 } else if (predictions.get(0).name.toUpperCase().equals("LUNK")) {
                     //change the character
                     currentPlayer = 1;
-                    Toast.makeText(getApplicationContext(), "Changing Player to 1", Toast.LENGTH_SHORT).show();
+             //       Toast.makeText(getApplicationContext(), "Changing Player to 1", Toast.LENGTH_SHORT).show();
                 } else {
                     String action = predictions.get(0).name + " " + predictions.get(0).score;
-                    Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show();
+             //       Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show();
                 }
 
             } else if(currentPlayer == 1 ){
