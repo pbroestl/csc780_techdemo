@@ -1,4 +1,4 @@
-package com.csc780.eppb.tbd;
+package com.csc780.eppb.tbd.scenes;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -7,14 +7,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.csc780.eppb.tbd.NeetGame;
 
 /**
  * Created by owner on 4/25/2017.
  */
 
-public class Hud {
+public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
 
@@ -57,7 +59,7 @@ public class Hud {
 
     }
 
-   // @Override
+    @Override
     public void dispose() {
         stage.dispose();
     }
