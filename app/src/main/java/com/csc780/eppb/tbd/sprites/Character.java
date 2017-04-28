@@ -16,7 +16,8 @@ public abstract class Character extends Sprite {
 
     //Fields shared between all characters
 
-    public Character (BattleScreen screen, float x , float y ) {
+    public Character (BattleScreen screen, float x , float y , String spriteSheet) {
+        //super(screen.getAtlas().findRegion(spriteSheet));
         this.screen = screen;
         this.world = screen.getWorld();
         setPosition(x,y);

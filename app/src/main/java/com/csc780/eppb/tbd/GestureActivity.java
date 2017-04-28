@@ -4,6 +4,7 @@ package com.csc780.eppb.tbd;
  * Created by Paul  on 4/18/2017.
  */
 
+import android.app.Activity;
 import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
@@ -11,9 +12,12 @@ import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.Prediction;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +26,11 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import java.util.ArrayList;
 
 public class GestureActivity extends AndroidApplication implements OnGesturePerformedListener{
+
+    public  int screenWidth = 0 ;
+    public  int screenHeight = 0 ;
+    RelativeLayout newView;
+
 
     private GestureLibrary boiSkillz;
     private GestureLibrary grilSkillz;
@@ -37,11 +46,14 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestures);
 
+        newView = (RelativeLayout) findViewById(R.id.GameScreenLayout);
+        newView.removeAllViews();
+        
         game = new NeetGame();
 
         TextView text= new TextView(this);
-        text.setText ("Why does this work?");
-        text.setTextSize(50.0f);
+        text.setText ("");
+        text.setTextSize(0.0f);
 
         boiSkillz =
                 GestureLibraries.fromRawResource(this, R.raw.gestures);
@@ -57,21 +69,30 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         allTehSkillz.add(boiSkillz);
         allTehSkillz.add(grilSkillz);
 
-        gestureView =
-                (GestureOverlayView) findViewById(R.id.gestureOverlay);
+
+        gestureView = new GestureOverlayView(this);
+
         gestureView.setGestureStrokeAngleThreshold(90.0f);
         gestureView.setGestureStrokeLengthThreshold(100.0f);
-        gestureView.setGestureColor(Color.BLUE);
+        gestureView.setGestureColor(Color.WHITE);
 
-        gestureView.addOnGesturePerformedListener(this);
+        gestureView.setVisibility(View.GONE);
+     //   gestureView.addOnGesturePerformedListener(this);
 
         //AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         View gameView = initializeForView(game);
 
-          gestureView.addView(text);
-          gestureView.addView(gameView, 0);
+        newView.addView(text);
+        newView.addView(gameView, 0 );
+         // gestureView.addView(text);
+        //  gestureView.addView(gameView, 0);
+
 
     }
+
+    Point size = new Point();
+
+
 
     private String lineOrientationCheck ( Gesture gesture) {
         float[] color = {0,1,0,1};
@@ -97,10 +118,6 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
                 horizontalPoints++;
 
             totalPoints++;
-            // String coordinates = "x : " + points[i] + "  Y  : " + points[i+1];
-            // Log.v("NEET", coordinates);
-            Log.v("NEET", Short.toString(horizontalPoints));
-             Log.v("NEET", Float.toString(totalPoints));
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
@@ -130,6 +147,7 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
                     String lineGestureType = lineOrientationCheck(gesture);
              //       Toast.makeText(getApplicationContext(), lineGestureType, Toast.LENGTH_SHORT).show();
                     game.addCombo();
+                    game.setAttack();
 
                 } else if (predictions.get(0).name.toUpperCase().equals("LUNK")) {
                     //change the character

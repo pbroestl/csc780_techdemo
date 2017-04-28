@@ -1,12 +1,17 @@
 package com.csc780.eppb.tbd.scenes;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -29,13 +34,31 @@ public class Hud implements Disposable {
     Label comboText;
     Label comboCount;
 
-    public Hud(SpriteBatch sb) {
+    private Touchpad touchpad;
+    private Touchpad.TouchpadStyle touchpadStyle;
+    private Skin touchpadSkin;
+
+
+
+
+    public Hud(SpriteBatch sb, TextureAtlas atlas) {
         attackTimer = 8.00f;
         timeCount = 0;
         combo = 0;
 
         viewport = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
+
+        touchpadSkin = new Skin();
+        touchpadSkin.add("touchBackground", new Texture ("joystick_background.png"));
+        touchpadSkin.add("touchKnob", new Texture("joystick_knob.png"));
+
+        touchpadStyle =  new Touchpad.TouchpadStyle();
+        touchpadStyle.background = touchpadSkin.getDrawable("touchBackground");
+        touchpadStyle.knob = touchpadSkin.getDrawable("touchKnob");
+
+        touchpad = new Touchpad(10 , touchpadStyle);
+        touchpad.setBounds(10 ,10,175, 175);
 
         Table table = new Table();
         table.top();
@@ -52,7 +75,10 @@ public class Hud implements Disposable {
         table.add(attackTimerCount).expandX();
         table.add(comboCount).expandX();
 
+        stage.addActor(touchpad);
         stage.addActor(table);
+        Gdx.input.setInputProcessor(stage);
+
     }
     public void update (float dt){
         updateTime(dt);
