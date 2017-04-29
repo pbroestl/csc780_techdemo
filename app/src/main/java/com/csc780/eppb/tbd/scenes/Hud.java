@@ -28,6 +28,7 @@ public class Hud implements Disposable {
     Label attackTimerCount;
     Label comboText;
     Label comboCount;
+    Label mapDifficultyText;
 
     public Hud(SpriteBatch sb) {
         attackTimer = 8.00f;
@@ -44,13 +45,18 @@ public class Hud implements Disposable {
         attackTimerText = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         attackTimerCount = new Label(String.format("%.2f", attackTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));;
         comboText = new Label("COMBO", new Label.LabelStyle(new BitmapFont(), Color.WHITE));;
-        comboCount = new Label(String.format("%3d", combo), new Label.LabelStyle(new BitmapFont(), Color.WHITE));;
+        comboCount = new Label(String.format("%3d", combo), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        mapDifficultyText = new Label(String.format(
+                "%s", NeetGame.getGameMapInfo().getDifficulty().toUpperCase()),
+                new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         table.add(attackTimerText).expandX().padTop(10);
         table.add(comboText).expandX().padTop(10);
         table.row();
         table.add(attackTimerCount).expandX();
         table.add(comboCount).expandX();
+        table.row();
+        table.add(mapDifficultyText).expandX();
 
         stage.addActor(table);
     }

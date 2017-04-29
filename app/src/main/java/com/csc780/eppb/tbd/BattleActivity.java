@@ -16,6 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.csc780.eppb.tbd.battle.AttackList;
+import com.csc780.eppb.tbd.battle.EnemyList;
+import com.csc780.eppb.tbd.battle.Map;
+import com.csc780.eppb.tbd.battle.MapList;
 
 import java.util.ArrayList;
 
@@ -41,7 +45,11 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle);
-        game = new NeetGame();
+        MapList.generate(this);
+        EnemyList.generate(this);
+        AttackList.generate(this);
+        Map map = MapList.getMap(this.getIntent().getStringExtra("difficulty"));
+        game = new NeetGame(map);
 
         RelativeLayout uiView = (RelativeLayout) findViewById(R.id.layoutBattleInterface);
         View gameView = initializeForView(game);

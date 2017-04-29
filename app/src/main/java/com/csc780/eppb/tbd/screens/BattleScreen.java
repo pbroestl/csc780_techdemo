@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.csc780.eppb.tbd.battle.EnemyList;
 import com.csc780.eppb.tbd.scenes.Hud;
 import com.csc780.eppb.tbd.Link;
 import com.csc780.eppb.tbd.NeetGame;
@@ -17,6 +18,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.csc780.eppb.tbd.sprites.Boy;
+import com.csc780.eppb.tbd.sprites.Enemy;
+import com.csc780.eppb.tbd.sprites.EnemyFactory;
+
+import java.util.ArrayList;
 
 /**
  * Created by owner on 4/25/2017.
@@ -26,6 +31,7 @@ public class BattleScreen implements Screen {
 
     private NeetGame neetGame;
     private TextureAtlas atlas;
+    private TextureAtlas enemyAtlus;
 
     //basic gameScreen variables
     private OrthographicCamera gameCam;
@@ -39,12 +45,14 @@ public class BattleScreen implements Screen {
     //Sprites
     private Link player;
     private Boy  boy;
+    private ArrayList<Enemy> enemies;
 
     float color [] = {0 , 0, 0 , 1};
 
     public BattleScreen(NeetGame game){
         this.neetGame = game;
         atlas = new TextureAtlas("link.txt");
+        enemyAtlus = new TextureAtlas("enemy.txt");
 
         gameCam = new OrthographicCamera();
         gamePort = new FitViewport(neetGame.V_WIDTH, neetGame.V_HEIGHT, gameCam);
@@ -57,6 +65,14 @@ public class BattleScreen implements Screen {
 
         player = new Link(this);
         boy = new Boy(this, 600, 200);
+        enemies = new ArrayList<>();
+        for(int i = 0; i < NeetGame.getGameMapInfo().getEnemyCount(); i++) {
+            int enemyId = NeetGame.getGameMapInfo().getEnemyList().get(i).getId();
+            float posX = NeetGame.getGameMapInfo().getEnemyList().get(i).getPosition()[0];
+            float posY = NeetGame.getGameMapInfo().getEnemyList().get(i).getPosition()[1];
+            enemies.add(EnemyFactory.getEnemy(enemyId, posX, posY, this));
+            Log.d("BattleScreen", EnemyList.getEnemy(enemyId).getName());
+        }
 
     }
 
@@ -76,13 +92,13 @@ public class BattleScreen implements Screen {
         //accepting input
         handleInput(dt);
 
-        world.step(1/60f,6, 2);
+        world.step(1 / 60f, 6, 2);
 
         gameCam.update();
         hud.update(dt);
+        for(int i = 0; i < NeetGame.getGameMapInfo().getEnemyCount(); i++)
+            enemies.get(i).update(dt);
         player.update(dt);
-
-
     }
 
     @Override
@@ -91,16 +107,21 @@ public class BattleScreen implements Screen {
         Gdx.gl.glClearColor(color[0], color[1], color[2], color[3]);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        neetGame.batch.begin();
-       // player.draw(neetGame.batch);
-        neetGame.batch.draw(player.getTextureRegion(), 100,100, 100 , 100);
-        neetGame.batch.end();
+
 
         //renderer our Box2DDebugLines
         b2dr.render(world,gameCam.combined );
 
         neetGame.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+
+        neetGame.batch.begin();
+        //player.draw(neetGame.batch);
+        neetGame.batch.draw(player.getTextureRegion(), 100,100, 100 , 100);
+        for(int i = 0; i < NeetGame.getGameMapInfo().getEnemyCount(); i++) {
+            enemies.get(i).draw(neetGame.batch);
+        }
+        neetGame.batch.end();
     }
 
     @Override
@@ -130,6 +151,10 @@ public class BattleScreen implements Screen {
 
     public TextureAtlas getAtlas(){
         return atlas;
+    }
+
+    public TextureAtlas getEnemyAtlus() {
+        return enemyAtlus;
     }
 
     public World getWorld () {

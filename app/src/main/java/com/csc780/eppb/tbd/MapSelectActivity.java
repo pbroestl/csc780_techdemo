@@ -31,7 +31,7 @@ public class MapSelectActivity extends Activity {
         mMapEasy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mDifficulty = "Easy";
+                String mDifficulty = "easy";
                 Intent intent = new Intent(mContext, BattleActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("difficulty", mDifficulty);
@@ -42,7 +42,7 @@ public class MapSelectActivity extends Activity {
         mMapMed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mDifficulty = "Medium";
+                String mDifficulty = "medium";
                 Intent intent = new Intent(mContext, BattleActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("difficulty", mDifficulty);
@@ -54,7 +54,7 @@ public class MapSelectActivity extends Activity {
         mMapHard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mDifficulty = "Hard";
+                String mDifficulty = "hard";
                 Intent intent = new Intent(mContext, BattleActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("difficulty", mDifficulty);

@@ -2,6 +2,7 @@ package com.csc780.eppb.tbd;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.csc780.eppb.tbd.battle.Map;
 import com.csc780.eppb.tbd.screens.BattleScreen;
 
 /**
@@ -16,6 +17,17 @@ public class NeetGame extends Game {
 
     private BattleScreen screen;
     public SpriteBatch batch ;
+
+    private static Map map;
+
+    public NeetGame() {
+        super();
+    }
+
+    public NeetGame(Map map) {
+        super();
+        NeetGame.map = map;
+    }
 
     @Override
     public void create(){
@@ -32,5 +44,9 @@ public class NeetGame extends Game {
     }
     public void addCombo(){
         screen.addCombo();
+    }
+
+    public static Map getGameMapInfo() {
+        return map;
     }
 }
