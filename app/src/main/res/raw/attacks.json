@@ -1,0 +1,37 @@
+[{
+    "id": 0,
+		"attack": "fira",
+		"target": "single",
+		"range": null,
+		"type": "fire",
+		"damage": 10
+	}, {
+    "id": 1,
+		"attack": "firaga",
+		"target": "multi",
+		"range": 10,
+		"type": "fire",
+		"damage": 10
+	}, {
+    "id": 2,
+		"attack": "blizzara",
+		"target": "single",
+		"range": null,
+		"type": "ice",
+		"damage": 10
+	}, {
+    "id": 3,
+		"attack": "bizzaga",
+		"target": "multi",
+		"range": null,
+		"type": "ice",
+		"damage": 10
+	}, {
+    "id": 4,
+		"attack": "bash",
+		"target": "single",
+		"range": null,
+		"type": "physical",
+		"damage": 15
+	}
+]
