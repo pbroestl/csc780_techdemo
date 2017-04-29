@@ -41,7 +41,7 @@ public class Hud implements Disposable {
 
 
 
-    public Hud(SpriteBatch sb, TextureAtlas atlas) {
+    public Hud(SpriteBatch sb) {
         attackTimer = 8.00f;
         timeCount = 0;
         combo = 0;

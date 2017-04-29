@@ -38,6 +38,7 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
     private int currentPlayer = 0 ;
 
     private GestureOverlayView gestureView;
+    private View gameView;
 
     private NeetGame game;
 
@@ -46,9 +47,10 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestures);
 
-        newView = (RelativeLayout) findViewById(R.id.GameScreenLayout);
-        newView.removeAllViews();
-        
+
+       // newView = (RelativeLayout) findViewById(R.id.GameScreenLayout);
+     //   newView.removeAllViews();
+
         game = new NeetGame();
 
         TextView text= new TextView(this);
@@ -70,27 +72,34 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         allTehSkillz.add(grilSkillz);
 
 
-        gestureView = new GestureOverlayView(this);
+        gestureView = (GestureOverlayView) findViewById(R.id.gestureOverlay);
 
         gestureView.setGestureStrokeAngleThreshold(90.0f);
         gestureView.setGestureStrokeLengthThreshold(100.0f);
         gestureView.setGestureColor(Color.WHITE);
 
-        gestureView.setVisibility(View.GONE);
-     //   gestureView.addOnGesturePerformedListener(this);
+       //  gestureView.setVisibility(View.GONE);
+        gestureView.addOnGesturePerformedListener(this);
 
         //AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        View gameView = initializeForView(game);
+         gameView = initializeForView(game);
 
-        newView.addView(text);
-        newView.addView(gameView, 0 );
-         // gestureView.addView(text);
-        //  gestureView.addView(gameView, 0);
+       // newView.addView(text);
+       // newView.addView(gameView, 0 );
+         gestureView.addView(text);
+         gestureView.addView(gameView, 0);
 
 
     }
 
     Point size = new Point();
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event ) {
+        Log.v("Neet", "Working");
+        gameView.onTouchEvent(event);
+        return true;
+    }
 
 
 
@@ -122,10 +131,10 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
             game.setColor(color);
-            return "Vertical";
+            return "VERTICAL";
         } else {
             game.setColor(color2);
-            return " Horizontal";
+            return " HORIZONTAL";
         }
     }
 
@@ -139,24 +148,17 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
        // Toast.makeText(getApplicationContext(), "Working", Toast.LENGTH_SHORT).show();
 
         ArrayList<Prediction> predictions = allTehSkillz.get(currentPlayer).recognize(gesture);
+        String gestureString;
 
         if (predictions.size() > 0 && predictions.get(0).score > 2.5) {
             if (currentPlayer == 0) {
 
-                if (predictions.get(0).name.toUpperCase().equals("LINE")) {
-                    String lineGestureType = lineOrientationCheck(gesture);
+                if (predictions.get(0).name.toUpperCase().equals("LINE"))
+                    gestureString = lineOrientationCheck(gesture);
+                else
+                    gestureString = predictions.get(0).name.toUpperCase();
              //       Toast.makeText(getApplicationContext(), lineGestureType, Toast.LENGTH_SHORT).show();
-                    game.addCombo();
-                    game.setAttack();
-
-                } else if (predictions.get(0).name.toUpperCase().equals("LUNK")) {
-                    //change the character
-                    currentPlayer = 1;
-             //       Toast.makeText(getApplicationContext(), "Changing Player to 1", Toast.LENGTH_SHORT).show();
-                } else {
-                    String action = predictions.get(0).name + " " + predictions.get(0).score;
-             //       Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show();
-                }
+                game.setAttack(gestureString);
 
             } else if(currentPlayer == 1 ){
 

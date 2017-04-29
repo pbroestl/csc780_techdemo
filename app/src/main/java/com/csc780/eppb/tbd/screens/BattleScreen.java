@@ -25,6 +25,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.csc780.eppb.tbd.sprites.Boy;
+import com.csc780.eppb.tbd.sprites.TestEnemy;
+import com.csc780.eppb.tbd.tools.Attack;
+import com.csc780.eppb.tbd.tools.WorldContactListener;
 
 /**
  * Created by owner on 4/25/2017.
@@ -35,7 +38,8 @@ public class BattleScreen implements Screen {
     private NeetGame neetGame;
     private TextureAtlas atlas;
 
-    private TextureAtlas joystickAtlas;
+    //temp atlas
+    public TextureAtlas bowserAtlas;
 
     //basic gameScreen variables
     private OrthographicCamera gameCam;
@@ -50,23 +54,29 @@ public class BattleScreen implements Screen {
     private Link player;
     private Boy  boy;
 
+    TestEnemy test;
+    TestEnemy test2;
+
+    private Attack attack;
+
     Texture background;
     float color [] = {0 , 0, 0 , 1};
 
     public BattleScreen(NeetGame game){
         this.neetGame = game;
         atlas = new TextureAtlas("link.txt");
-        joystickAtlas  = new TextureAtlas("joystick.txt");
+        bowserAtlas  = new TextureAtlas("bowser.txt");
 
         background = new Texture("forest2.png");
 
         gameCam = new OrthographicCamera();
         gamePort = new FitViewport(neetGame.V_WIDTH , neetGame.V_HEIGHT , gameCam);
-        hud = new Hud(game.batch, joystickAtlas);
+        hud = new Hud(game.batch);
 
         gameCam.position.set(gamePort.getWorldWidth() /2, gamePort.getWorldHeight() /2, 0);
 
         world = new World(new Vector2(0,0), true );
+        world.setContactListener(new WorldContactListener());
         b2dr = new Box2DDebugRenderer();
 
         BodyDef bdef  = new BodyDef ();
@@ -95,7 +105,12 @@ public class BattleScreen implements Screen {
         body.createFixture(fdef);
 
         player = new Link(this);
-        boy = new Boy(this, 600, 200, "link_run");
+
+        test = new TestEnemy(this, new Rectangle(400, 100, 150, 150));
+        test2 = new TestEnemy(this, new Rectangle(400, 300, 200, 200));
+
+        boy = new Boy(this, new Rectangle(600,200,0,0));
+     //   attack = new Attack(this, new Rectangle(550, 50, 100, 100));
 
     }
 
@@ -145,6 +160,9 @@ public class BattleScreen implements Screen {
         boy.update(dt);
         player.update(dt);
 
+        test.update(dt);
+        test2.update(dt);
+
 
     }
 
@@ -162,7 +180,11 @@ public class BattleScreen implements Screen {
         neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH , NeetGame.V_HEIGHT );
 
        // player.draw(neetGame.batch);
+        test.draw(neetGame.batch);
+        test2.draw(neetGame.batch);
         boy.draw(neetGame.batch);
+
+        //attack.draw(neetGame.batch);
 
        // neetGame.batch.draw(boy.getTextureRegion(), boy.getX(), boy.getY(), boy.getWidth() , boy.getHeight());
 
@@ -201,6 +223,8 @@ public class BattleScreen implements Screen {
 
     @Override
     public void dispose() {
+        world.dispose();
+        b2dr.dispose();
         hud.dispose();
     }
 
@@ -220,5 +244,8 @@ public class BattleScreen implements Screen {
     public void addCombo(){
         hud.addCombo();
     }
-    public void setAttack() {boy.setAttack();}
+
+    public void setAttack(String gesture) {
+        boy.setAttack(gesture);
+    }
 }
