@@ -82,12 +82,13 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         gestureView.addOnGesturePerformedListener(this);
 
         //AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-         gameView = initializeForView(game);
-
+        gameView = initializeForView(game);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.GameScreenLayout);
+        layout.addView(gameView, 0);
        // newView.addView(text);
        // newView.addView(gameView, 0 );
          gestureView.addView(text);
-         gestureView.addView(gameView, 0);
+
 
 
     }

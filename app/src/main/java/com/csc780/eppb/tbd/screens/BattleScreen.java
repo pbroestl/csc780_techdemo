@@ -110,6 +110,7 @@ public class BattleScreen implements Screen {
         test2 = new TestEnemy(this, new Rectangle(400, 300, 200, 200));
 
         boy = new Boy(this, new Rectangle(600,200,0,0));
+        hud.setCurrentPlayer("Link");
      //   attack = new Attack(this, new Rectangle(550, 50, 100, 100));
 
     }
