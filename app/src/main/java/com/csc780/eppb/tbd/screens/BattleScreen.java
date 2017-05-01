@@ -1,11 +1,8 @@
 package com.csc780.eppb.tbd.screens;
 
-import android.util.Log;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -92,6 +89,7 @@ public class BattleScreen implements Screen {
 
         shape.setAsBox(rect.getWidth() /2 , rect.getHeight()/2);
         fdef.shape = shape;
+        fdef.filter.categoryBits = NeetGame.DEFAULT_BIT;
         body.createFixture(fdef);
 
         //right boundary from lower right corner
@@ -106,7 +104,7 @@ public class BattleScreen implements Screen {
 
         player = new Link(this);
 
-        test = new TestEnemy(this, new Rectangle(400, 100, 150, 150));
+        test = new TestEnemy(this, new Rectangle(400, 200, 150, 150));
         test2 = new TestEnemy(this, new Rectangle(400, 300, 200, 200));
 
         boy = new Boy(this, new Rectangle(600,200,0,0));
@@ -125,26 +123,26 @@ public class BattleScreen implements Screen {
     Vector3 temp  = new Vector3();
 
     Vector2 direction = new Vector2();
-    float speed = 100.0f;
+    float speed = 200.0f;
 
     public void handleInput (float dt){
         if (!boy.isAttacking) {
             if(Gdx.input.isTouched()) {
 
-                position.set(boy.b2body.getPosition().x, boy.b2body.getPosition().y);
+                position.set(boy.body.getPosition().x, boy.body.getPosition().y);
                 gameCam.unproject(temp.set(Gdx.input.getX(), Gdx.input.getY(), 0));
                 touch.set(temp.x, temp.y);
                 direction.set(touch).sub(position).nor();
 
-                boy.b2body.applyLinearImpulse(direction.scl(speed), boy.b2body.getWorldCenter(), true);
+                boy.body.applyLinearImpulse(direction.scl(speed), boy.body.getWorldCenter(), true);
 
-//            if(Gdx.input.getX() > neetGame.V_WIDTH && boy.b2body.getLinearVelocity().x <= 200)
-//              boy.b2body.applyLinearImpulse(new Vector2(50f, 0),boy.b2body.getWorldCenter(), true);
-//            if(Gdx.input.getX() < neetGame.V_WIDTH && boy.b2body.getLinearVelocity().x >= -200)
-//              boy.b2body.applyLinearImpulse(new Vector2(-50f, 0),boy.b2body.getWorldCenter(), true);
+//            if(Gdx.input.getX() > neetGame.V_WIDTH && boy.body.getLinearVelocity().x <= 200)
+//              boy.body.applyLinearImpulse(new Vector2(50f, 0),boy.body.getWorldCenter(), true);
+//            if(Gdx.input.getX() < neetGame.V_WIDTH && boy.body.getLinearVelocity().x >= -200)
+//              boy.body.applyLinearImpulse(new Vector2(-50f, 0),boy.body.getWorldCenter(), true);
 
             } else {
-                boy.b2body.setLinearVelocity(0.0f, 0.0f);
+                boy.body.setLinearVelocity(0.0f, 0.0f);
             }
         }
     }
@@ -152,8 +150,6 @@ public class BattleScreen implements Screen {
     public void update(float dt) {
         //accepting input
         handleInput(dt);
-
-        world.step(1/60f, 30, 30);
 
         gameCam.update();
         hud.update(dt);
@@ -164,7 +160,7 @@ public class BattleScreen implements Screen {
         test.update(dt);
         test2.update(dt);
 
-
+        world.step(1/60f, 100, 100);
     }
 
     @Override
@@ -178,7 +174,7 @@ public class BattleScreen implements Screen {
 
         neetGame.batch.begin();
 
-        neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH , NeetGame.V_HEIGHT );
+     //   neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH , NeetGame.V_HEIGHT );
 
        // player.draw(neetGame.batch);
         test.draw(neetGame.batch);

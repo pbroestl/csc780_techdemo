@@ -10,7 +10,9 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.csc780.eppb.tbd.NeetGame;
 import com.csc780.eppb.tbd.screens.BattleScreen;
+import com.csc780.eppb.tbd.sprites.Enemy;
 
 /**
  * Created by owner on 4/28/2017.
@@ -68,6 +70,11 @@ public class Attack extends Sprite {
 
         fdef.shape = shape;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("attack");
+        fdef.filter.categoryBits = NeetGame.ATTACK_BIT;
+        fdef.filter.maskBits =  NeetGame.ENEMY_BIT  ;
+
+        b2body.createFixture(fdef).setUserData(this);
     }
+
+
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.csc780.eppb.tbd.NeetGame;
 import com.csc780.eppb.tbd.screens.BattleScreen;
 
 /**
@@ -41,11 +42,7 @@ public class EnemyAttack extends Sprite{
 
         defineAttack(bounds);
 
-        testSprite = new TextureRegion(screen.getAtlas().findRegion("link_run"), 32 * 3 , 0 , 32 , 32 );
         setBounds(getX(),getY(), bounds.getWidth(), bounds.getHeight());
-
-        setPosition(b2body.getPosition().x  - getWidth()/2 , b2body.getPosition().y - getHeight() / 2);
-        setRegion(testSprite);
     }
 
 
@@ -58,14 +55,15 @@ public class EnemyAttack extends Sprite{
         b2body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
-
-
         PolygonShape shape = new PolygonShape();
 
         shape.setAsBox(bounds.getWidth(),bounds.getHeight());
 
         fdef.shape = shape;
         fdef.isSensor = true;
-        b2body.createFixture(fdef).setUserData("enemyattack");
+        fdef.filter.categoryBits = NeetGame.ENEMYATTACK_BIT;
+        fdef.filter.maskBits =  NeetGame.CHARACTER_BIT;
+
+        b2body.createFixture(fdef).setUserData(this);
     }
 }
