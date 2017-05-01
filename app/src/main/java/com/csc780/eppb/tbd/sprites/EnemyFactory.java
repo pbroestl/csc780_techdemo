@@ -1,5 +1,6 @@
 package com.csc780.eppb.tbd.sprites;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.csc780.eppb.tbd.screens.BattleScreen;
 
 /**
@@ -8,19 +9,19 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
 
 public class EnemyFactory {
 
-    public static Enemy getEnemy(int id, float x, float y, BattleScreen screen) {
+    public static Enemy getEnemy(int id, Rectangle bounds, BattleScreen screen) {
         switch(id) {
             case 0:
-                return new EnemyOne(id, screen, x, y);
+                return new EnemyOne(id, screen, bounds);
             case 1:
-                return new EnemyOne(id, screen, x, y);
+                return new EnemyOne(id, screen, bounds);
             case 2:
-                return new EnemyOne(id, screen, x, y);
+                return new EnemyOne(id, screen, bounds);
             case 3:
-                return new EnemyOne(id, screen, x, y);
+                return new EnemyOne(id, screen, bounds);
             case 4:
             default:
-                return new EnemyOne(id, screen, x, y);
+                return new EnemyOne(id, screen, bounds);
         }
     }
 }

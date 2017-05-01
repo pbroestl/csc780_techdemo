@@ -1,6 +1,7 @@
 package com.csc780.eppb.tbd.sprites;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.csc780.eppb.tbd.screens.BattleScreen;
@@ -16,11 +17,12 @@ public abstract class Character extends Sprite {
 
     //Fields shared between all characters
 
-    public Character (BattleScreen screen, float x , float y ) {
+    public Character (BattleScreen screen, Rectangle bounds) {
+        //super(screen.getAtlas().findRegion(spriteSheet));
         this.screen = screen;
         this.world = screen.getWorld();
-        setPosition(x,y);
+        setPosition(bounds.getX(), bounds.getY());
     }
 
-    protected abstract void defineCharacter(float x , float y);
+    protected abstract void defineCharacter(Rectangle bounds);
 }

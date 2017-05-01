@@ -1,9 +1,13 @@
 package com.csc780.eppb.tbd.sprites;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.csc780.eppb.tbd.battle.EnemyList;
 import com.csc780.eppb.tbd.screens.BattleScreen;
@@ -16,7 +20,8 @@ public abstract class Enemy extends Sprite {
 
     protected BattleScreen screen;
     protected World world;
-    public Body b2body;
+    public Body body;
+    protected Fixture fixture;
     private float posX;
     private float posY;
 
@@ -28,20 +33,34 @@ public abstract class Enemy extends Sprite {
 //    private String element;
 //    private ArrayList<Attack> attacks;
 
-    public Enemy (int id, BattleScreen screen, float x , float y ) {
+    public Enemy (int id, BattleScreen screen, Rectangle bounds) {
         this.screen = screen;
-        this.world = screen.getWorld();
-        setPosition(x,y);
+        this.world  = screen.getWorld();
+        setPosition(bounds.getX(),bounds.getY());
 
-        posX = x;
-        posY = y;
+        BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+
+        bdef.position.set(getX() , getY());
+        bdef.type = BodyDef.BodyType.KinematicBody;
+        body = world.createBody(bdef);
+
+        shape.setAsBox(bounds.getWidth()/4 , bounds.getHeight()/4);
+        fdef.shape = shape;
+       // fdef.isSensor = true;
+
+        fixture  = body.createFixture(fdef);
+
+        posX = bounds.getX();
+        posY = bounds.getY();
 
         this.id = id;
         name = EnemyList.getEnemy(id).getName();
         maxHp = EnemyList.getEnemy(id).getMaxHp();
         def = EnemyList.getEnemy(id).getDef();
-    }
 
+    }
     public float getPosX() {
         return posX;
     }
@@ -57,7 +76,11 @@ public abstract class Enemy extends Sprite {
 
     public abstract void update(float dt);
 
-    protected abstract void defineEnemy(float x, float y);
+    // Abstract classes
+//    protected abstract void defineEnemy(float x, float y);
 
-    public abstract TextureRegion getTextureRegion();
+    abstract public void onAttackHit();
+
+//    public abstract TextureRegion getTextureRegion();
+
 }

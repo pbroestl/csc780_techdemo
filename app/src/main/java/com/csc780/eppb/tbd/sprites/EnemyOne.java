@@ -2,6 +2,7 @@ package com.csc780.eppb.tbd.sprites;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -26,8 +27,8 @@ public class EnemyOne extends Enemy {
 
     private float stateTimer;
 
-    public EnemyOne(int id, BattleScreen screen, float x, float y) {
-        super(id, screen, x, y);
+    public EnemyOne(int id, BattleScreen screen, Rectangle bounds) {
+        super(id, screen, bounds);
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0.0f;
@@ -39,7 +40,7 @@ public class EnemyOne extends Enemy {
         animStand = new Animation(0.05f, frames);
         frames.clear();
 
-        defineEnemy(x,y);
+        defineEnemy(bounds.getX(), bounds.getY());
         standRegion = new TextureRegion(screen.getEnemyAtlus().findRegion("bad"+id, -1));
         setBounds(getX(), getY(), 50, 50);
         setRegion(standRegion);
@@ -71,16 +72,20 @@ public class EnemyOne extends Enemy {
         BodyDef bdef = new BodyDef();
         bdef.position.set(x, y);
         bdef.type = BodyDef.BodyType.DynamicBody;
-        b2body = world.createBody(bdef);
+        body = world.createBody(bdef);
 
         FixtureDef fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
         shape.setRadius(10);
 
         fdef.shape = shape;
-        b2body.createFixture(fdef);
+        body.createFixture(fdef);
     }
     public TextureRegion getTextureRegion() {
         return new TextureRegion(screen.getEnemyAtlus().findRegion("bad"+this.getId()));
+    }
+
+    public void onAttackHit() {
+
     }
 }

@@ -18,17 +18,17 @@ public class Link extends Sprite {
     private float stateTimer;
 
     public Link (BattleScreen game){
-        super(game.getAtlas().findRegion("link_24x24"));
+        super(game.getAtlas().findRegion("link_run"));
 
         stateTimer = 0.0f;
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        for (int i = 0 ; i < 7 ; i++)
-            frames.add(new TextureRegion(getTexture(),i * 24, 0, 24, 24 ));
+        for (int i = 0 ; i < 9 ; i++)
+            frames.add(new TextureRegion(getTexture(),i * 32, 0, 32, 32 ));
 
         running = new Animation(0.05f, frames);
 
         currentRegion = new TextureRegion(getTexture(), 0,0,0,0);
-        setBounds(0,0, 24 , 24 );
+        setBounds(0,0, 32 , 32 );
         setRegion(currentRegion);
     }
     public void update (float dt) {

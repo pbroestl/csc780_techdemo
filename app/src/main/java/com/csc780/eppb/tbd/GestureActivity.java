@@ -4,6 +4,7 @@ package com.csc780.eppb.tbd;
  * Created by Paul  on 4/18/2017.
  */
 
+import android.app.Activity;
 import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
@@ -11,9 +12,12 @@ import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.Prediction;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +27,17 @@ import java.util.ArrayList;
 
 public class GestureActivity extends AndroidApplication implements OnGesturePerformedListener{
 
+    public  int screenWidth = 0 ;
+    public  int screenHeight = 0 ;
+    RelativeLayout newView;
+
     private GestureLibrary boiSkillz;
     private GestureLibrary grilSkillz;
     private ArrayList<GestureLibrary> allTehSkillz;
     private int currentPlayer = 0 ;
 
     private GestureOverlayView gestureView;
+    private View gameView;
 
     private NeetGame game;
 
@@ -37,11 +46,15 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestures);
 
+
+//        newView = (RelativeLayout) findViewById(R.id.GameScreenLayout);
+//        newView.removeAllViews();
+
         game = new NeetGame();
 
         TextView text= new TextView(this);
-        text.setText ("Why does this work?");
-        text.setTextSize(50.0f);
+        text.setText ("");
+        text.setTextSize(0.0f);
 
         boiSkillz =
                 GestureLibraries.fromRawResource(this, R.raw.gestures);
@@ -57,21 +70,36 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         allTehSkillz.add(boiSkillz);
         allTehSkillz.add(grilSkillz);
 
-        gestureView =
-                (GestureOverlayView) findViewById(R.id.gestureOverlay);
+
+        gestureView = (GestureOverlayView) findViewById(R.id.gestureOverlay);
+
         gestureView.setGestureStrokeAngleThreshold(90.0f);
         gestureView.setGestureStrokeLengthThreshold(100.0f);
-        gestureView.setGestureColor(Color.BLUE);
+        gestureView.setGestureColor(Color.WHITE);
 
+//        gestureView.setVisibility(View.GONE);
         gestureView.addOnGesturePerformedListener(this);
 
         //AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        View gameView = initializeForView(game);
-
-          gestureView.addView(text);
-          gestureView.addView(gameView, 0);
+        gameView = initializeForView(game);
+        RelativeLayout gameScreenLayout = (RelativeLayout) findViewById(R.id.GameScreenLayout);
+        gameScreenLayout.addView(gameView, 0);
+//        newView.addView(text);
+//        newView.addView(gameView, 0 );
+         gestureView.addView(text);
 
     }
+
+    Point size = new Point();
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event ) {
+        Log.v("Neet", "Working");
+        gameView.onTouchEvent(event);
+        return true;
+    }
+
+
 
     private String lineOrientationCheck ( Gesture gesture) {
         float[] color = {0,1,0,1};
@@ -97,18 +125,14 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
                 horizontalPoints++;
 
             totalPoints++;
-            // String coordinates = "x : " + points[i] + "  Y  : " + points[i+1];
-            // Log.v("NEET", coordinates);
-            Log.v("NEET", Short.toString(horizontalPoints));
-             Log.v("NEET", Float.toString(totalPoints));
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
             game.setColor(color);
-            return "Vertical";
+            return "VERTICAL";
         } else {
             game.setColor(color2);
-            return " Horizontal";
+            return " HORIZONTAL";
         }
     }
 
@@ -122,23 +146,17 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
        // Toast.makeText(getApplicationContext(), "Working", Toast.LENGTH_SHORT).show();
 
         ArrayList<Prediction> predictions = allTehSkillz.get(currentPlayer).recognize(gesture);
+        String gestureString;
 
         if (predictions.size() > 0 && predictions.get(0).score > 2.5) {
             if (currentPlayer == 0) {
 
-                if (predictions.get(0).name.toUpperCase().equals("LINE")) {
-                    String lineGestureType = lineOrientationCheck(gesture);
+                if (predictions.get(0).name.toUpperCase().equals("LINE"))
+                    gestureString = lineOrientationCheck(gesture);
+                else
+                    gestureString = predictions.get(0).name.toUpperCase();
              //       Toast.makeText(getApplicationContext(), lineGestureType, Toast.LENGTH_SHORT).show();
-                    game.addCombo();
-
-                } else if (predictions.get(0).name.toUpperCase().equals("LUNK")) {
-                    //change the character
-                    currentPlayer = 1;
-             //       Toast.makeText(getApplicationContext(), "Changing Player to 1", Toast.LENGTH_SHORT).show();
-                } else {
-                    String action = predictions.get(0).name + " " + predictions.get(0).score;
-             //       Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show();
-                }
+                game.setAttack(gestureString);
 
             } else if(currentPlayer == 1 ){
 
