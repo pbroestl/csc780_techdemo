@@ -193,7 +193,7 @@ public class BattleScreen implements Screen {
         Gdx.gl.glClearColor(color[0], color[1], color[2], color[3]);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        hud.stage.draw();
+//        hud.stage.draw();
         neetGame.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 
         neetGame.batch.begin();

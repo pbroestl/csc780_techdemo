@@ -10,6 +10,7 @@ import android.gesture.Prediction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -38,6 +39,7 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
     private int currentPlayer = 0;
 
     private GestureOverlayView gestureView;
+    View gameView;
 
     private NeetGame game;
 
@@ -52,7 +54,7 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
         game = new NeetGame(map);
 
         RelativeLayout uiView = (RelativeLayout) findViewById(R.id.layoutBattleInterface);
-        View gameView = initializeForView(game);
+        gameView = initializeForView(game);
         uiView.addView(gameView, 0);
 
         skillsBoy = GestureLibraries.fromRawResource(this, R.raw.gestures);
@@ -88,8 +90,11 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
         super.onResume();
     }
 
-    private void setMap(String difficulty) {
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event ) {
+        Log.v(TAG, "Working");
+        gameView.onTouchEvent(event);
+        return true;
     }
 
     @Override
