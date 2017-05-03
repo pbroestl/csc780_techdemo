@@ -87,7 +87,7 @@ public class BattleScreen implements Screen {
     public BattleScreen(NeetGame game){
         this.neetGame = game;
         atlas = new TextureAtlas("link.txt");
-        enemyAtlus = new TextureAtlas("enemy.txt");
+//        enemyAtlus = new TextureAtlas("enemy.txt");
         hudAtlus = new TextureAtlas("hud.txt");
         bowserAtlas  = new TextureAtlas("bowser.txt");
 
@@ -209,7 +209,7 @@ public class BattleScreen implements Screen {
 
         neetGame.batch.begin();
 
-        //neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH, NeetGame.V_HEIGHT );
+        neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH, NeetGame.V_HEIGHT );
 //          test.draw(neetGame.batch);
 //
 //          test2.draw(neetGame.batch);
