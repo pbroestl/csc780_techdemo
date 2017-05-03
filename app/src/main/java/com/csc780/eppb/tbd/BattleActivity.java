@@ -17,8 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.csc780.eppb.tbd.battle.AttackList;
-import com.csc780.eppb.tbd.battle.EnemyList;
 import com.csc780.eppb.tbd.battle.Map;
 import com.csc780.eppb.tbd.battle.MapList;
 
@@ -141,11 +139,11 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
-            game.setColor(color);
             return "Vertical";
         } else {
-            game.setColor(color2);
+
             return "Horizontal";
+
         }
     }
 

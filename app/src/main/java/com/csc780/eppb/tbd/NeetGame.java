@@ -55,10 +55,6 @@ public class NeetGame extends Game {
         super.render();
     }
 
-    public void setColor (float[] newColor) {
-        screen.setColor(newColor);
-    }
-
     public void addCombo(){
         screen.addCombo();
     }

@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.csc780.eppb.tbd.battle.AttackList;
+import com.csc780.eppb.tbd.battle.EnemyList;
+import com.csc780.eppb.tbd.battle.GsonInstance;
+import com.csc780.eppb.tbd.battle.MapList;
+
 /**
  * Created by Elaine on 4/14/2017.
  */
@@ -22,6 +27,11 @@ public class MapSelectActivity extends Activity {
         setContentView(R.layout.activity_select);
 
         mContext = this;
+
+        GsonInstance.createGson(this);
+        MapList.generate(this);
+        EnemyList.generate(this);
+        AttackList.generate(this);
 
         final Button mMapEasy = (Button) findViewById(R.id.selectEasy);
         final Button mMapMed = (Button) findViewById(R.id.selectMed);

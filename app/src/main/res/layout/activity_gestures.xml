@@ -14,7 +14,6 @@
         android:fadeOffset="0"
         android:gestureStrokeType="single"
         android:splitMotionEvents="false"
-        android:layout_marginEnd="77dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true">
 

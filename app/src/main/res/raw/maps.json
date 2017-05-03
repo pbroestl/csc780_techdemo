@@ -1,15 +1,8 @@
 [
   {
     "difficulty": "easy",
-    "enemy_count": 3,
+    "enemy_count": 2,
     "enemies": [
-      {
-        "id": 0,
-        "position": [
-          350,
-          100
-        ]
-      },
       {
         "id": 5,
         "position": [

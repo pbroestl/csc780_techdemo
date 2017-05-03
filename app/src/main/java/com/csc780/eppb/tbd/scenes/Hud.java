@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,12 +20,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.csc780.eppb.tbd.NeetGame;
 import com.csc780.eppb.tbd.screens.BattleScreen;
 import com.csc780.eppb.tbd.sprites.Boy;
+import com.csc780.eppb.tbd.sprites.Unit;
 
 import java.util.Locale;
 
@@ -59,12 +59,14 @@ public class Hud implements Disposable {
     Image healthFillImg;
     float healthMaxWidth;
 
-    private Touchpad touchpad;
-    private Touchpad.TouchpadStyle touchpadStyle;
-    private Skin touchpadSkin;
+    private Touchpad joypad;
+    private Touchpad.TouchpadStyle joypadStyle;
+    private Skin joypadSkin;
 
-    public Hud(SpriteBatch sb, BattleScreen screen, Boy player) {
-        this.player = player;
+    private Vector2 moveVector;
+
+    public Hud(SpriteBatch sb, BattleScreen screen, Unit player) {
+        this.player = (Boy)player;
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("prstartk.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -76,25 +78,28 @@ public class Hud implements Disposable {
         BitmapFont font = generator.generateFont(parameter);
         generator.dispose();
 
-        attackTimer = 100.00f;
+        attackTimer = 10.00f;
+
         timeCount = 0;
         combo = 0;
-        health = player.getCurrentHealth();
-        maxHealth = player.getMAX_HEALTH();
+        health = ((Boy) player).getCurrentHealth();
+        maxHealth = ((Boy) player).getMAX_HEALTH();
 
         viewport = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
 
-        touchpadSkin = new Skin();
-        touchpadSkin.add("touchBackground", new Texture ("joystick_background.png"));
-        touchpadSkin.add("touchKnob", new Texture("joystick_knob.png"));
+        joypadSkin = new Skin();
+        joypadSkin.add("touchBackground", new Texture ("joystick_background.png"));
+        joypadSkin.add("touchKnob", new Texture("joystick_knob.png"));
 
-        touchpadStyle =  new Touchpad.TouchpadStyle();
-        touchpadStyle.background = touchpadSkin.getDrawable("touchBackground");
-        touchpadStyle.knob = touchpadSkin.getDrawable("touchKnob");
+        joypadStyle =  new Touchpad.TouchpadStyle();
+        joypadStyle.background = joypadSkin.getDrawable("touchBackground");
+        joypadStyle.knob = joypadSkin.getDrawable("touchKnob");
 
-        touchpad = new Touchpad(10 , touchpadStyle);
-        touchpad.setBounds(10 ,10,175, 175);
+        joypad = new Touchpad(10 , joypadStyle);
+        joypad.setBounds(10 ,10, 175, 175);
+
+        moveVector = new Vector2();
 
         Table table = new Table();
         table.setFillParent(true);
@@ -138,7 +143,7 @@ public class Hud implements Disposable {
 
         table.add(stack).expandX().left().pad(10);
 
-        stage.addActor(touchpad);
+        stage.addActor(joypad);
         stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
     }
@@ -164,18 +169,24 @@ public class Hud implements Disposable {
         attackTimerCount.setText(String.format("%.2f", attackTimer));
     }
 
+
     public void updateHealth() {
 //        if(player == null)
 //            return;
 
-        if(health == 0.0)
+        if (health == 0.0)
             return;
 
         health = player.getCurrentHealth();
         float healthRatio = health / maxHealth;
-        healthFillImg.setWidth(healthMaxWidth*healthRatio);
-        if(healthFillImg.getWidth() < 0)
+        healthFillImg.setWidth(healthMaxWidth * healthRatio);
+        if (healthFillImg.getWidth() < 0)
             healthFillImg.setWidth(0);
+    }
+
+    public Vector2 getJoypadVector(){
+        moveVector.set(joypad.getKnobPercentX(), joypad.getKnobPercentY());
+        return moveVector;
     }
 
     public void addCombo(){

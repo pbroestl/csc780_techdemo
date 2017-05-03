@@ -48,11 +48,6 @@ public class TitleScreenActivity extends Activity {
                 return true;
             }
         });
-
-        GsonInstance.createGson(this);
-        MapList.generate(this);
-        EnemyList.generate(this);
-        AttackList.generate(this);
     }
 
     @Override

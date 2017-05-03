@@ -89,4 +89,8 @@ public class EnemyOne extends Enemy {
     public void onAttackHit(Attack attack) {
 
     }
+
+    public void turnUpdate(float dt) {
+
+    }
 }
