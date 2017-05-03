@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutMapSelection"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/selectEasy"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/button_map_select_1"
+        android:textAppearance="@android:style/TextAppearance.Material.Button" />
+
+    <Button
+        android:id="@+id/selectMed"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/button_map_select_2"
+        android:textAppearance="@android:style/TextAppearance.Material.Button" />
+
+    <Button
+        android:id="@+id/selectHard"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/button_map_select_3"
+        android:textAppearance="@android:style/TextAppearance.Material.Button" />
+
+    <Button
+        android:id="@+id/testGesture"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Test Gesture"
+        android:textAppearance="@android:style/TextAppearance.Material.Button" />
+</LinearLayout>

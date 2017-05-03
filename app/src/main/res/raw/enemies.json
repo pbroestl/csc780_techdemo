@@ -1,0 +1,93 @@
+[{
+		"id": 0,
+		"name": "Bad Dude 1",
+		"hp": 10,
+		"def": 1,
+		"element": "none",
+		"attacks": [
+			null
+		],
+		"size": [
+			50,
+			50
+		]
+	}, {
+		"id": 1,
+		"name": "Bad Dude 2",
+		"hp": 10,
+		"def": 1,
+		"element": "fire",
+		"attacks": [
+			null
+		],
+		"size": [
+			50,
+			50
+		]
+	}, {
+		"id": 2,
+		"name": "Bad Dude 3",
+		"hp": 10,
+		"def": 1,
+		"element": "ice",
+		"attacks": [
+			null
+		],
+		"size": [
+			50,
+			50
+		]
+	}, {
+		"id": 3,
+		"name": "Bad Dude 4",
+		"hp": 10,
+		"def": 1,
+		"element": "lightning",
+		"attacks": [
+			null
+		],
+		"size": [
+			50,
+			50
+		]
+	}, {
+		"id": 4,
+		"name": "Bad Dude 5",
+		"hp": 10,
+		"def": 1,
+		"element": "water",
+		"attacks": [
+			null
+		],
+		"size": [
+			50,
+			50
+		]
+	}, {
+		"id": 5,
+		"name": "Bowser",
+		"hp": 100,
+		"def": 1,
+		"element": "physical",
+		"attacks": [
+			null
+		],
+		"size": [
+			200,
+			200
+		]
+	}, {
+		"id": 6,
+		"name": "Bowser Mini",
+		"hp": 50,
+		"def": 1,
+		"element": "physical",
+		"attacks": [
+			null
+		],
+		"size": [
+			150,
+			150
+		]
+	}
+]
