@@ -9,7 +9,7 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
 
 public class EnemyFactory {
 
-    public static Enemy getEnemy(int id, Rectangle bounds, BattleScreen screen) {
+    public static Enemy getEnemy(int id, BattleScreen screen, Rectangle bounds) {
         switch(id) {
             case 0:
                 return new EnemyOne(id, screen, bounds);
@@ -20,6 +20,11 @@ public class EnemyFactory {
             case 3:
                 return new EnemyOne(id, screen, bounds);
             case 4:
+                return new EnemyOne(id, screen, bounds);
+            case 5:
+                return new TestEnemy(id, screen, bounds);
+            case 6:
+                return new TestEnemy(id, screen, bounds);
             default:
                 return new EnemyOne(id, screen, bounds);
         }

@@ -1,5 +1,6 @@
 package com.csc780.eppb.tbd.screens;
 
+
 import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
@@ -78,8 +79,8 @@ public class BattleScreen implements Screen {
         background = new Texture("forest2.png");
 
         gameCam = new OrthographicCamera();
-        gamePort = new FitViewport(neetGame.V_WIDTH , neetGame.V_HEIGHT , gameCam);
-        hud = new Hud(game.batch, this);
+        gamePort = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, gameCam);
+
 
         gameCam.position.set(gamePort.getWorldWidth() /2, gamePort.getWorldHeight() /2, 0);
 
@@ -100,6 +101,7 @@ public class BattleScreen implements Screen {
 
         shape.setAsBox(rect.getWidth() /2 , rect.getHeight()/2);
         fdef.shape = shape;
+        fdef.filter.categoryBits = NeetGame.DEFAULT_BIT;
         body.createFixture(fdef);
 
         //right boundary from lower right corner
@@ -112,11 +114,21 @@ public class BattleScreen implements Screen {
         fdef.shape = shape;
         body.createFixture(fdef);
 
-        player = new Link(this);
+        loadSprites();
+        hud = new Hud(game.batch, this, boy);
+//        player = new Link(this);
 
-        test = new TestEnemy(this, new Rectangle(400, 100, 150, 150));
-        test2 = new TestEnemy(this, new Rectangle(400, 300, 200, 200));
+//        test = new TestEnemy(this, new Rectangle(400, 200, 150, 150));
+//        test2 = new TestEnemy(this, new Rectangle(400, 300, 200, 200));
 
+
+
+        hud.setCurrentPlayer("Link");
+//        attack = new Attack(this, new Rectangle(550, 50, 100, 100));
+
+    }
+
+    private void loadSprites() {
         boy = new Boy(this, new Rectangle(600,200,0,0));
 
         enemies = new ArrayList<>();
@@ -124,14 +136,12 @@ public class BattleScreen implements Screen {
             int enemyId = NeetGame.getGameMapInfo().getEnemyList().get(i).getId();
             float posX = NeetGame.getGameMapInfo().getEnemyList().get(i).getPosition()[0];
             float posY = NeetGame.getGameMapInfo().getEnemyList().get(i).getPosition()[1];
+            float sizeX = EnemyList.getEnemy(enemyId).getSize()[0];
+            float sizeY = EnemyList.getEnemy(enemyId).getSize()[1];
 //            enemies.add(EnemyFactory.getEnemy(enemyId, posX, posY, this));
-            enemies.add(EnemyFactory.getEnemy(enemyId, new Rectangle(posX, posY, 50, 50), this));
+            enemies.add(EnemyFactory.getEnemy(enemyId, this, new Rectangle(posX, posY, sizeX, sizeY)));
             Log.d("BattleScreen", EnemyList.getEnemy(enemyId).getName());
         }
-
-        hud.setCurrentPlayer("Link");
-//        attack = new Attack(this, new Rectangle(550, 50, 100, 100));
-
     }
 
     @Override
@@ -144,26 +154,26 @@ public class BattleScreen implements Screen {
     Vector3 temp  = new Vector3();
 
     Vector2 direction = new Vector2();
-    float speed = 100.0f;
+    float speed = 200.0f;
 
     public void handleInput (float dt){
         if (!boy.isAttacking) {
             if(Gdx.input.isTouched()) {
 
-                position.set(boy.b2body.getPosition().x, boy.b2body.getPosition().y);
+                position.set(boy.body.getPosition().x, boy.body.getPosition().y);
                 gameCam.unproject(temp.set(Gdx.input.getX(), Gdx.input.getY(), 0));
                 touch.set(temp.x, temp.y);
                 direction.set(touch).sub(position).nor();
 
-                boy.b2body.applyLinearImpulse(direction.scl(speed), boy.b2body.getWorldCenter(), true);
+                boy.body.applyLinearImpulse(direction.scl(speed), boy.body.getWorldCenter(), true);
 
-//            if(Gdx.input.getX() > neetGame.V_WIDTH && boy.b2body.getLinearVelocity().x <= 200)
-//              boy.b2body.applyLinearImpulse(new Vector2(50f, 0),boy.b2body.getWorldCenter(), true);
-//            if(Gdx.input.getX() < neetGame.V_WIDTH && boy.b2body.getLinearVelocity().x >= -200)
-//              boy.b2body.applyLinearImpulse(new Vector2(-50f, 0),boy.b2body.getWorldCenter(), true);
+//            if(Gdx.input.getX() > neetGame.V_WIDTH && boy.body.getLinearVelocity().x <= 200)
+//              boy.body.applyLinearImpulse(new Vector2(50f, 0),boy.body.getWorldCenter(), true);
+//            if(Gdx.input.getX() < neetGame.V_WIDTH && boy.body.getLinearVelocity().x >= -200)
+//              boy.body.applyLinearImpulse(new Vector2(-50f, 0),boy.body.getWorldCenter(), true);
 
             } else {
-                boy.b2body.setLinearVelocity(0.0f, 0.0f);
+                boy.body.setLinearVelocity(0.0f, 0.0f);
             }
         }
     }
@@ -172,37 +182,36 @@ public class BattleScreen implements Screen {
         //accepting input
         handleInput(dt);
 
-        world.step(1/60f, 30, 30);
-
         gameCam.update();
         hud.update(dt);
 
         boy.update(dt);
-        player.update(dt);
+//        player.update(dt);
 
         for(int i = 0; i < NeetGame.getGameMapInfo().getEnemyCount(); i++)
             enemies.get(i).update(dt);
 
-        test.update(dt);
-        test2.update(dt);
+//        test.update(dt);
+//        test2.update(dt);
+
+        world.step(1/60f, 100, 100);
     }
 
     @Override
     public void render(float delta) {
         update(delta);
+
         Gdx.gl.glClearColor(color[0], color[1], color[2], color[3]);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-//        hud.stage.draw();
         neetGame.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 
         neetGame.batch.begin();
 
-        neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH , NeetGame.V_HEIGHT );
+     //   neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH , NeetGame.V_HEIGHT );
 
-       // player.draw(neetGame.batch);
-        test.draw(neetGame.batch);
-        test2.draw(neetGame.batch);
+//        test.draw(neetGame.batch);
+//        test2.draw(neetGame.batch);
         boy.draw(neetGame.batch);
 
         for(int i = 0; i < NeetGame.getGameMapInfo().getEnemyCount(); i++) {
@@ -267,11 +276,11 @@ public class BattleScreen implements Screen {
         return world;
     }
 
-
     public void setColor (float[] newColor) {
         //if (newColor.length == 4)
            // color = newColor;
     }
+
     public void addCombo(){
         hud.addCombo();
     }

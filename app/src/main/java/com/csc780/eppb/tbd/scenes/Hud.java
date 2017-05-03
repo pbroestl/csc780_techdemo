@@ -1,5 +1,7 @@
 package com.csc780.eppb.tbd.scenes;
 
+import android.util.Log;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.csc780.eppb.tbd.NeetGame;
 import com.csc780.eppb.tbd.screens.BattleScreen;
+import com.csc780.eppb.tbd.sprites.Boy;
 
 import java.util.Locale;
 
@@ -33,12 +36,13 @@ import java.util.Locale;
 public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
+    private Boy player;
 
     private Float attackTimer;
     private float timeCount;
     private Integer combo;
-    private int health;
-    private final int MAX_HEALTH = 100;
+    private float health;
+    private float maxHealth;
 
     Label attackTimerText;
     Label attackTimerCount;
@@ -52,12 +56,16 @@ public class Hud implements Disposable {
     TextureRegion healthFill;
     Sprite healthBarSprite;
     Sprite healthFillSprite;
+    Image healthFillImg;
+    float healthMaxWidth;
 
     private Touchpad touchpad;
     private Touchpad.TouchpadStyle touchpadStyle;
     private Skin touchpadSkin;
 
-    public Hud(SpriteBatch sb, BattleScreen screen) {
+    public Hud(SpriteBatch sb, BattleScreen screen, Boy player) {
+        this.player = player;
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("prstartk.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 16;
@@ -71,7 +79,8 @@ public class Hud implements Disposable {
         attackTimer = 100.00f;
         timeCount = 0;
         combo = 0;
-        health = 100;
+        health = player.getCurrentHealth();
+        maxHealth = player.getMAX_HEALTH();
 
         viewport = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -89,15 +98,14 @@ public class Hud implements Disposable {
 
         Table table = new Table();
         table.setFillParent(true);
-//        table.setDebug(true);
 
         currentPlayerText = new Label("PLAYER", new Label.LabelStyle(font, Color.WHITE));
         mapDifficultyText = new Label(String.format(
                 Locale.ENGLISH, "%s", NeetGame.getGameMapInfo().getDifficulty().toUpperCase()),
                 new Label.LabelStyle(font, Color.WHITE));
-        hpText = new Label(String.format(
-                Locale.ENGLISH, "HP %d/%d", health, MAX_HEALTH),
-                new Label.LabelStyle(font, Color.WHITE));
+//        hpText = new Label(String.format(
+//                Locale.ENGLISH, "HP %1f/%1f", health, MAX_HEALTH),
+//                new Label.LabelStyle(font, Color.WHITE));
         attackTimerText = new Label("TIME", new Label.LabelStyle(font, Color.WHITE));
         attackTimerCount = new Label(String.format(Locale.ENGLISH, "%.2f", attackTimer), new Label.LabelStyle(font, Color.WHITE));
         comboText = new Label("COMBO", new Label.LabelStyle(font, Color.WHITE));
@@ -112,22 +120,23 @@ public class Hud implements Disposable {
         table.add(attackTimerText).expandX().right().padRight(20);
         table.add(attackTimerCount).right().padTop(5);
         table.row();
-        table.add(hpText).expandX().left().padLeft(10);
-//        healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_bar"));
-//        healthBarSprite = new Sprite(healthBar);
-//        healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_fill"));
-//        healthFill.setRegionWidth(0);
-//        healthFillSprite = new Sprite(healthFill);
-//        Image healthBarImg = new Image(healthBarSprite);
-//        Image healthFillImg = new Image(healthFillSprite);
-//        healthBarImg.setScale(2f, 1);
-//        healthFillImg.setScale(2f, 1);
-//
-//        Stack stack = new Stack();
-//        stack.add(healthBarImg);
-//        stack.add(healthFillImg);
+//        table.add(hpText).expandX().left().padLeft(10);
+        healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_bar"));
+        healthBarSprite = new Sprite(healthBar);
+        healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_fill"));
+        healthFillSprite = new Sprite(healthFill);
+        Image healthBarImg = new Image(healthBarSprite);
+        healthFillImg = new Image(healthFillSprite);
+        healthBarImg.setScale(2f, 1);
+        healthFillImg.setScale(2f, 1);
+        healthMaxWidth = healthFillImg.getWidth();
+        Log.v("Hud", ""+healthFillImg.getWidth());
+        Stack stack = new Stack();
+        stack.add(healthFillImg);
+        stack.add(healthBarImg);
 
-//        table.add(stack).expandX().left().pad(10);
+
+        table.add(stack).expandX().left().pad(10);
 
         stage.addActor(touchpad);
         stage.addActor(table);
@@ -136,6 +145,8 @@ public class Hud implements Disposable {
 
     public void update (float dt){
         updateTime(dt);
+
+        updateHealth();
     }
 
     @Override
@@ -154,11 +165,17 @@ public class Hud implements Disposable {
     }
 
     public void updateHealth() {
+//        if(player == null)
+//            return;
+
         if(health == 0.0)
             return;
-        health -= 10;
-        hpText.setText(String.format(
-                Locale.ENGLISH, "HP %d/%d", health, MAX_HEALTH));
+
+        health = player.getCurrentHealth();
+        float healthRatio = health / maxHealth;
+        healthFillImg.setWidth(healthMaxWidth*healthRatio);
+        if(healthFillImg.getWidth() < 0)
+            healthFillImg.setWidth(0);
     }
 
     public void addCombo(){

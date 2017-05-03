@@ -31,7 +31,6 @@ import java.util.ArrayList;
 public class BattleActivity extends AndroidApplication implements OnGesturePerformedListener {
 
     private static final String TAG = "Battle Activity";
-    private String mDifficulty;
 
     private GestureLibrary skillsBoy;
     private GestureLibrary skillsGirl;
@@ -47,9 +46,6 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle);
-        MapList.generate(this);
-        EnemyList.generate(this);
-        AttackList.generate(this);
         Map map = MapList.getMap(this.getIntent().getStringExtra("difficulty"));
         game = new NeetGame(map);
 
@@ -72,7 +68,7 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
         gestureView = (GestureOverlayView) findViewById(R.id.gestureOverlay);
         gestureView.setGestureStrokeAngleThreshold(90.0f);
         gestureView.setGestureStrokeLengthThreshold(100.f);
-        gestureView.setGestureColor(Color.BLUE);
+        gestureView.setGestureColor(Color.WHITE);
         gestureView.addOnGesturePerformedListener(this);
 
 
@@ -88,6 +84,11 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -117,8 +118,6 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
 
         float[] points = gesture.getStrokes().get(0).points ;
 
-        float averageSlope = 0.0f;
-
         short totalPoints = 0;
         short horizontalPoints = 0;
 
@@ -137,8 +136,8 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
             totalPoints++;
             // String coordinates = "x : " + points[i] + "  Y  : " + points[i+1];
             // Log.v("NEET", coordinates);
-            Log.v("NEET", Short.toString(horizontalPoints));
-            Log.v("NEET", Float.toString(totalPoints));
+            Log.d(TAG, Short.toString(horizontalPoints));
+            Log.d(TAG, Float.toString(totalPoints));
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
@@ -146,7 +145,7 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
             return "Vertical";
         } else {
             game.setColor(color2);
-            return " Horizontal";
+            return "Horizontal";
         }
     }
 
@@ -157,25 +156,17 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
             return;
         }
 
-        // Toast.makeText(getApplicationContext(), "Working", Toast.LENGTH_SHORT).show();
-
         ArrayList<Prediction> predictions = skills.get(currentPlayer).recognize(gesture);
+        String gestureString;
 
         if (predictions.size() > 0 && predictions.get(0).score > 2.5) {
             if (currentPlayer == 0) {
 
-                if (predictions.get(0).name.toUpperCase().equals("LINE")) {
-                    String lineGestureType = lineOrientationCheck(gesture);
-                    Toast.makeText(getApplicationContext(), lineGestureType, Toast.LENGTH_SHORT).show();
-
-                } else if (predictions.get(0).name.toUpperCase().equals("LUNK")) {
-                    //change the character
-                    currentPlayer = 1;
-                    Toast.makeText(getApplicationContext(), "Changing Player to 1", Toast.LENGTH_SHORT).show();
-                } else {
-                    String action = predictions.get(0).name + " " + predictions.get(0).score;
-                    Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show();
-                }
+                if (predictions.get(0).name.toUpperCase().equals("LINE"))
+                    gestureString = lineOrientationCheck(gesture);
+                else
+                    gestureString = predictions.get(0).name.toUpperCase();
+                game.setAttack(gestureString);
 
             } else if(currentPlayer == 1 ){
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.Array;
 import com.csc780.eppb.tbd.screens.BattleScreen;
+import com.csc780.eppb.tbd.tools.Attack;
 
 /**
  * Created by Elaine on 4/27/2017.
@@ -85,7 +86,7 @@ public class EnemyOne extends Enemy {
         return new TextureRegion(screen.getEnemyAtlus().findRegion("bad"+this.getId()));
     }
 
-    public void onAttackHit() {
+    public void onAttackHit(Attack attack) {
 
     }
 }

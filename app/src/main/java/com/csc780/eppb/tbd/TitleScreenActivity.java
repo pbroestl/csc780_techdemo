@@ -10,6 +10,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.csc780.eppb.tbd.battle.AttackList;
+import com.csc780.eppb.tbd.battle.EnemyList;
+import com.csc780.eppb.tbd.battle.GsonInstance;
+import com.csc780.eppb.tbd.battle.MapList;
+import com.google.gson.Gson;
+
 /**
  * Created by Elaine on 4/7/2017.
  */
@@ -42,6 +48,11 @@ public class TitleScreenActivity extends Activity {
                 return true;
             }
         });
+
+        GsonInstance.createGson(this);
+        MapList.generate(this);
+        EnemyList.generate(this);
+        AttackList.generate(this);
     }
 
     @Override

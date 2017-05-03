@@ -19,6 +19,8 @@ public class Enemy {
     private int def;
     @SerializedName("attacks")
     private Attack[] attacks;
+    @SerializedName("size")
+    private float[] size;
 
     public int getId() {
         return id;
@@ -40,7 +42,11 @@ public class Enemy {
         return def;
     }
 
-    public  Attack[] getAttacks() {
+    public Attack[] getAttacks() {
         return attacks;
+    }
+
+    public float[] getSize() {
+        return size;
     }
 }

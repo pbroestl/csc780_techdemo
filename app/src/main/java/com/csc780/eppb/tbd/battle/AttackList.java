@@ -3,10 +3,10 @@ package com.csc780.eppb.tbd.battle;
 import android.content.Context;
 
 import com.csc780.eppb.tbd.R;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -19,17 +19,16 @@ import java.util.HashMap;
 public class AttackList {
 
     private static BufferedReader reader;
-    private static Gson gson;
     private static ArrayList<Attack> attackList;
     private static HashMap<String, ArrayList<Attack>> filteredAttacks;
     private static final String[] attackTypes = { "fire", "ice", "physical" };
 
     public static void generate(Context context) {
+
         Type t = new TypeToken<ArrayList<Attack>>(){}.getType();
         reader = new BufferedReader(
                 new InputStreamReader(context.getResources().openRawResource(R.raw.attacks)));
-        gson = new Gson();
-        attackList = gson.fromJson(reader, t);
+        attackList = GsonInstance.gson.fromJson(reader, t);
 
         filteredAttacks = new HashMap<>();
         for (String attackType : attackTypes)
@@ -37,6 +36,12 @@ public class AttackList {
 
         for(int i = 0; i < attackList.size(); i++)
             filteredAttacks.get(attackList.get(i).getType()).add(attackList.get(i));
+
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Attack getAttack(int id) {
