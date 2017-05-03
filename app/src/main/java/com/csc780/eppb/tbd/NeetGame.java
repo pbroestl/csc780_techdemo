@@ -41,9 +41,6 @@ public class NeetGame extends Game {
     public void render () {
         super.render();
     }
-    public void setColor (float[] newColor) {
-        screen.setColor(newColor);
-    }
 
     public void setAttack(String gesture) { screen.setAttack(gesture);}
 }

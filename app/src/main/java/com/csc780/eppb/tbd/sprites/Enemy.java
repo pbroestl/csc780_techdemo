@@ -1,16 +1,14 @@
 package com.csc780.eppb.tbd.sprites;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.csc780.eppb.tbd.NeetGame;
 import com.csc780.eppb.tbd.screens.BattleScreen;
 import com.csc780.eppb.tbd.tools.EnemyAttack;
@@ -19,31 +17,34 @@ import com.csc780.eppb.tbd.tools.EnemyAttack;
  * Created by owner on 4/26/2017.
  */
 
-public abstract class Enemy extends Sprite {
-    protected BattleScreen screen;
-    protected World world;
-    public Body body;
+public abstract class Enemy extends Unit {
+    //Constant Variables
+    protected final float MOVE_SPEED = 50.0f;
 
-    private final float MOVE_SPEED = 50.0f;
+    // The possible animation states an enemy can exhibit
+    public enum EnemyState {IDLE, MOVING, ATTACKING, HURTING, DYING, TARGETING, DEAD};
 
-    protected Fixture fixture;
+    // Enemy Stats
+    protected float hp;
+    protected float damage;
+    protected float defense;
 
-    public enum EnemyState {STANDING, RUNNING, ATTACKING, HURTING, TARGETING};
+    //used to start the Enemy AI at the beginning of the turn
+    protected boolean isTurnSet;
+
+    //keeping track recent state
     protected EnemyState currentState;
     protected EnemyState previousState;
     protected boolean faceRight;
 
     protected boolean isHurting;
-    protected float isHurtingCounter;
 
     protected float randAttackTimer;
     protected float stateTimer;
 
 
-    protected EnemyAttack currentAttack;
     public boolean isAttacking;
     public boolean isAttackSet;
-    protected float attackDuration;
 
     //Targeting and movement variables
     protected Fixture targetSensor;
@@ -60,49 +61,61 @@ public abstract class Enemy extends Sprite {
 
     protected Vector2 enemyPosition;
     protected Vector2 enemyStartPosition;
-    protected Vector2 characterPosition;
+    protected Vector2 heroPosition;
 
     //Fields shared between all characters
+    protected BitmapFont font;
+    public float health;
+
+    public int damageTaken;
+
+    //Temporary
+    protected EnemyAttack currentAttack;
 
     public Enemy (BattleScreen screen, Rectangle bounds) {
-        this.screen = screen;
-        this.world  = screen.getWorld();
-        setPosition(bounds.getX(),bounds.getY());
+        super(screen, bounds);
+        defineBody(bounds);
+
+        isHero = false;
 
         //vectors for calculating movement/Targeting
         enemyPosition  = new Vector2();
         enemyStartPosition = new Vector2();
-        characterPosition  = new Vector2();
+        heroPosition = new Vector2();
         movementDirection = new Vector2();
 
+        isTurnSet = false;
         isTargeting = false;
         isRangeSet = false;
 
+    }
+
+
+    // Abstract functions
+    abstract public void onAttackHit();
+
+
+    //Override functions
+    @Override
+    protected void defineBody(Rectangle bounds) {
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-
 
         bdef.position.set(getX() , getY());
         bdef.type = BodyDef.BodyType.KinematicBody;
         bdef.allowSleep = false;
         body = world.createBody(bdef);
 
-
         shape.setAsBox(bounds.getWidth()/4 , bounds.getHeight()/4);
         fdef.shape = shape;
 
         fdef.filter.categoryBits = NeetGame.ENEMY_BIT;
         fdef.filter.maskBits = NeetGame.DEFAULT_BIT | NeetGame.CHARACTER_BIT |NeetGame.ATTACK_BIT ;
-       // fdef.isSensor = true;
-
+        // fdef.isSensor = true;
 
         fixture  = body.createFixture(fdef);
-
     }
-
-    // Abstract classes
-    abstract public void onAttackHit();
 
     public void createRangeSensor() {
         FixtureDef fdef = new FixtureDef();
@@ -134,37 +147,29 @@ public abstract class Enemy extends Sprite {
         targetSensor.setUserData(this);
     }
 
-    public void setCatagoryFilter(short filterBit ) {
-        Filter filter  = new Filter();
-        filter.categoryBits = filterBit;
-        fixture.setFilterData(filter);
-    }
-
 
     public void targetCharacter (Hero character) {
         //setting the vectors for calculating the direction and distance between the target
-        characterPosition.set(character.body.getPosition().x,character.body.getPosition().y );
+        heroPosition.set(character.body.getPosition().x,character.body.getPosition().y );
         enemyPosition.set(body.getPosition().x, body.getPosition().y);
-        float tempDistance  = enemyPosition.dst(characterPosition);
+        float tempDistance  = enemyPosition.dst(heroPosition);
 
             currentTarget = character;
-            movementDirection.set(characterPosition).sub(enemyPosition).nor();
+            movementDirection.set(heroPosition).sub(enemyPosition).nor();
 
             enemyStartPosition = enemyPosition;
             distanceFromTarget =tempDistance;
-            isTargeting = true;
-            body.setLinearVelocity(movementDirection.scl(MOVE_SPEED));
     }
 
     public void attackCharacter (Hero character) {
+
         if (currentTarget.getId() == character.getId()) {
             isTargeting = false;
-            isRangeSet = false;
+//            isRangeSet = false;
 
             body.setLinearVelocity(0, 0);
 
             isAttacking = true;
-            attackDuration = 0.8f;
             stateTimer = 0.0f;
             randAttackTimer = 1.0f + (float) Math.random() * 8;
 

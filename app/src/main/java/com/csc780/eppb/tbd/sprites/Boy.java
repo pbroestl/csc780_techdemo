@@ -37,6 +37,7 @@ public class Boy extends Hero {
 
     public Boy(BattleScreen screen, Rectangle bounds) {
         super(screen, bounds);
+        fixture.setUserData(this);
 
         currentState = PlayerState.STANDING;
         previousState = PlayerState.STANDING;
@@ -68,11 +69,19 @@ public class Boy extends Hero {
 
     public void update(float dt) {
         setRegion(getFrame(dt));
+//        if(screen.heroTurnTimer <= 0)
+//            endTurn();
 
         if(faceRight)
             setPosition(body.getPosition().x + 20 - getWidth()/2 , body.getPosition().y - getHeight() / 2);
         else
             setPosition(body.getPosition().x - 20  - getWidth()/2, body.getPosition().y - getHeight() / 2);
+    }
+
+    public void turnUpdate(float dt) {
+        if(!isAttacking && screen.heroTurnTimer <= 0) {
+            endTurn();
+        }
     }
 
     public PlayerState getState(float dt){
@@ -84,13 +93,6 @@ public class Boy extends Hero {
             return PlayerState.HURTING;
 
         } else if (isAttacking) {
-            attackDuration -= dt;
-            if (attackDuration <= 0) {
-                attackDuration = 0.0f;
-                isAttacking = false;
-                world.destroyBody(currentAttack.b2body);
-
-            }
             return PlayerState.ATTACKING;
         } else if(body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0)
             return PlayerState.RUNNING;
@@ -105,6 +107,10 @@ public class Boy extends Hero {
         switch (currentState) {
             case ATTACKING:
                 region = (TextureRegion)characterAttack.getKeyFrame(stateTimer);
+                if(characterAttack.isAnimationFinished(stateTimer)) {
+                    world.destroyBody(currentAttack.b2body);
+                    isAttacking = false;
+                }
                 break;
             case RUNNING :
                 region = (TextureRegion)characterRun.getKeyFrame(stateTimer, true);

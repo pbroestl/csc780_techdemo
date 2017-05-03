@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -34,31 +34,33 @@ public class Hud implements Disposable {
     Label comboText;
     Label comboCount;
 
-    private Touchpad touchpad;
-    private Touchpad.TouchpadStyle touchpadStyle;
-    private Skin touchpadSkin;
+    private Touchpad joypad;
+    private Touchpad.TouchpadStyle joypadStyle;
+    private Skin joypadSkin;
 
-
+    private Vector2 moveVector;
 
 
     public Hud(SpriteBatch sb) {
-        attackTimer = 8.00f;
+        attackTimer = 10.00f;
         timeCount = 0;
         combo = 0;
 
         viewport = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
 
-        touchpadSkin = new Skin();
-        touchpadSkin.add("touchBackground", new Texture ("joystick_background.png"));
-        touchpadSkin.add("touchKnob", new Texture("joystick_knob.png"));
+        joypadSkin = new Skin();
+        joypadSkin.add("touchBackground", new Texture ("joystick_background.png"));
+        joypadSkin.add("touchKnob", new Texture("joystick_knob.png"));
 
-        touchpadStyle =  new Touchpad.TouchpadStyle();
-        touchpadStyle.background = touchpadSkin.getDrawable("touchBackground");
-        touchpadStyle.knob = touchpadSkin.getDrawable("touchKnob");
+        joypadStyle =  new Touchpad.TouchpadStyle();
+        joypadStyle.background = joypadSkin.getDrawable("touchBackground");
+        joypadStyle.knob = joypadSkin.getDrawable("touchKnob");
 
-        touchpad = new Touchpad(10 , touchpadStyle);
-        touchpad.setBounds(10 ,10,175, 175);
+        joypad = new Touchpad(10 , joypadStyle);
+        joypad.setBounds(10 ,10, 175, 175);
+
+        moveVector = new Vector2();
 
         Table table = new Table();
         table.top();
@@ -75,7 +77,7 @@ public class Hud implements Disposable {
         table.add(attackTimerCount).expandX();
         table.add(comboCount).expandX();
 
-        stage.addActor(touchpad);
+        stage.addActor(joypad);
         stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
 
@@ -98,6 +100,11 @@ public class Hud implements Disposable {
         if (attackTimer < 0.0f)
             attackTimer = 0.0f;
         attackTimerCount.setText(String.format("%.2f", attackTimer));
+    }
+
+    public Vector2 getJoypadVector(){
+        moveVector.set(joypad.getKnobPercentX(), joypad.getKnobPercentY());
+        return moveVector;
     }
 
     public void addCombo(){

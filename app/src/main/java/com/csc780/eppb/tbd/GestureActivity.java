@@ -48,8 +48,8 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         setContentView(R.layout.activity_gestures);
 
 
-       // newView = (RelativeLayout) findViewById(R.id.GameScreenLayout);
-     //   newView.removeAllViews();
+        newView = (RelativeLayout) findViewById(R.id.GameScreenLayout);
+        newView.removeAllViews();
 
         game = new NeetGame();
 
@@ -72,22 +72,22 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         allTehSkillz.add(grilSkillz);
 
 
-        gestureView = (GestureOverlayView) findViewById(R.id.gestureOverlay);
-
-        gestureView.setGestureStrokeAngleThreshold(90.0f);
-        gestureView.setGestureStrokeLengthThreshold(100.0f);
-        gestureView.setGestureColor(Color.WHITE);
-
-       //  gestureView.setVisibility(View.GONE);
-        gestureView.addOnGesturePerformedListener(this);
+//        gestureView = (GestureOverlayView) findViewById(R.id.gestureOverlay);
+//
+//        gestureView.setGestureStrokeAngleThreshold(90.0f);
+//        gestureView.setGestureStrokeLengthThreshold(100.0f);
+//        gestureView.setGestureColor(Color.WHITE);
+//
+//        gestureView.setVisibility(View.GONE);
+//        gestureView.addOnGesturePerformedListener(this);
 
         //AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
          gameView = initializeForView(game);
 
        // newView.addView(text);
-       // newView.addView(gameView, 0 );
-         gestureView.addView(text);
-         gestureView.addView(gameView, 0);
+        newView.addView(gameView, 0 );
+        // gestureView.addView(text);
+        // gestureView.addView(gameView, 0);
 
 
     }
@@ -96,7 +96,6 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
 
     @Override
     public boolean onTouchEvent(MotionEvent event ) {
-        Log.v("Neet", "Working");
         gameView.onTouchEvent(event);
         return true;
     }
@@ -130,12 +129,11 @@ public class GestureActivity extends AndroidApplication implements OnGesturePerf
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
-            game.setColor(color);
             return "VERTICAL";
         } else {
-            game.setColor(color2);
             return " HORIZONTAL";
         }
+
     }
 
 

@@ -129,10 +129,8 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
         }
 
         if((totalPoints - horizontalPoints) > horizontalPoints) {
-            game.setColor(color);
             return "Vertical";
         } else {
-            game.setColor(color2);
             return " Horizontal";
         }
     }
