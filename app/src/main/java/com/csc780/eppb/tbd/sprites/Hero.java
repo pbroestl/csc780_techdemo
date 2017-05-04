@@ -56,4 +56,8 @@ public abstract class Hero extends Unit {
     public int getId(){
         return id;
     }
+
+    public String getName() {
+        return name;
+    }
 }

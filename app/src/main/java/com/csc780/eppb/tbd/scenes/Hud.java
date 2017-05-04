@@ -37,6 +37,7 @@ public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
     private Boy player;
+    private BattleScreen screen;
 
     private Float attackTimer;
     private float timeCount;
@@ -66,7 +67,7 @@ public class Hud implements Disposable {
     private Vector2 moveVector;
 
     public Hud(SpriteBatch sb, BattleScreen screen, Unit player) {
-        this.player = (Boy)player;
+        this.player = (Boy) player;
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("prstartk.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -104,7 +105,8 @@ public class Hud implements Disposable {
         Table table = new Table();
         table.setFillParent(true);
 
-        currentPlayerText = new Label("PLAYER", new Label.LabelStyle(font, Color.WHITE));
+//        currentPlayerText = new Label("PLAYER", new Label.LabelStyle(font, Color.WHITE));
+//        currentPlayerText.setText(String.format(Locale.ENGLISH, "%3s's Turn", ((Boy) player).getName()));
         mapDifficultyText = new Label(String.format(
                 Locale.ENGLISH, "%s", NeetGame.getGameMapInfo().getDifficulty().toUpperCase()),
                 new Label.LabelStyle(font, Color.WHITE));
@@ -121,10 +123,8 @@ public class Hud implements Disposable {
         table.add(comboText).expandX().right().pad(5);
         table.add(comboCount).right().pad(5);
         table.row();
-        table.add(currentPlayerText).expandX().left().padLeft(10);
-        table.add(attackTimerText).expandX().right().padRight(20);
-        table.add(attackTimerCount).right().padTop(5);
-        table.row();
+//        table.add(currentPlayerText).expandX().left().padLeft(10);
+//        table.row();
 //        table.add(hpText).expandX().left().padLeft(10);
         healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_bar"));
         healthBarSprite = new Sprite(healthBar);
@@ -142,6 +142,8 @@ public class Hud implements Disposable {
 
 
         table.add(stack).expandX().left().pad(10);
+        table.add(attackTimerText).expandX().right().padRight(20);
+        table.add(attackTimerCount).right().padTop(5);
 
         stage.addActor(joypad);
         stage.addActor(table);
@@ -160,12 +162,20 @@ public class Hud implements Disposable {
     }
 
     public void updateTime( float dt){
-        if (attackTimer <= 0.0f)
+
+        if(!player.isTurn()) {
+            attackTimer = 8.0f;
+            combo = 0;
+            comboCount.setText(String.format("%3d", combo));
+            return;
+        }
+
+        if(attackTimer == 0.0f)
             return;
 
-        attackTimer -= dt ;
-        if (attackTimer < 0.0f)
+        if((attackTimer -= dt) < 0.0f)
             attackTimer = 0.0f;
+
         attackTimerCount.setText(String.format("%.2f", attackTimer));
     }
 
@@ -197,7 +207,4 @@ public class Hud implements Disposable {
         comboCount.setText(String.format("%3d", combo));
     }
 
-    public void setCurrentPlayer(String name) {
-        currentPlayerText.setText(String.format(Locale.ENGLISH, "%3s's Turn", name));
-    }
 }

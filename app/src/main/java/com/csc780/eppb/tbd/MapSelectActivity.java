@@ -36,14 +36,13 @@ public class MapSelectActivity extends Activity {
         final Button mMapEasy = (Button) findViewById(R.id.selectEasy);
         final Button mMapMed = (Button) findViewById(R.id.selectMed);
         final Button mMapHard = (Button) findViewById(R.id.selectHard);
-        final Button mTestGesture = (Button) findViewById(R.id.testGesture);
 
         mMapEasy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String mDifficulty = "easy";
                 Intent intent = new Intent(mContext, BattleActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 intent.putExtra("difficulty", mDifficulty);
                 startActivity(intent);
             }
@@ -54,7 +53,7 @@ public class MapSelectActivity extends Activity {
             public void onClick(View v) {
                 String mDifficulty = "medium";
                 Intent intent = new Intent(mContext, BattleActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 intent.putExtra("difficulty", mDifficulty);
                 startActivity(intent);
             }
@@ -66,17 +65,8 @@ public class MapSelectActivity extends Activity {
             public void onClick(View v) {
                 String mDifficulty = "hard";
                 Intent intent = new Intent(mContext, BattleActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
                 intent.putExtra("difficulty", mDifficulty);
-                startActivity(intent);
-            }
-        });
-
-        mTestGesture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, GestureActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
@@ -86,5 +76,6 @@ public class MapSelectActivity extends Activity {
     protected void onResume() {
         super.onResume();
     }
+
 
 }

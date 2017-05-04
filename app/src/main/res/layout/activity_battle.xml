@@ -14,14 +14,6 @@
     <include layout="@layout/activity_gestures" />
 
     <Button
-        android:id="@+id/buttonEndTurn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_end"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/buttonRun" />
-
-    <Button
         android:id="@+id/buttonRun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

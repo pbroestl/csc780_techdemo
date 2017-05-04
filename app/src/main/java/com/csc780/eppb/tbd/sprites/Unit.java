@@ -30,10 +30,15 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
         protected boolean isTurn;
         protected boolean isDead;
         protected boolean isHero;
+        protected boolean isDying;
+
+        protected boolean isAttacking;
 
 
         //
         protected int id;
+
+        protected String name;
 
         public Unit(BattleScreen screen, Rectangle bounds ){
             this.screen = screen;
@@ -47,7 +52,6 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
         public abstract void turnUpdate(float dt);
         protected abstract void defineBody(Rectangle bounds);
 
-
         //Shared functions
         public void startTurn () {
             isTurn = true;
@@ -56,10 +60,15 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
             isTurn = false;
             screen.nextTurn();
         }
+        public boolean isTurn() {
+            return isTurn;
+        }
 
         public boolean isDead(){
             return isDead;
         }
+
+        public boolean isDying(){ return isDying;}
 
         public void destroyBody(){
             world.destroyBody(body);
@@ -68,4 +77,7 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
         public boolean isHero() {
             return isHero;
         }
+
+        public boolean isAttacking() { return isAttacking;}
+
 }

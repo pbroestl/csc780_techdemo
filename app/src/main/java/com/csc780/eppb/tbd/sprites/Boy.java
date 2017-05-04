@@ -26,8 +26,6 @@ public class Boy extends Hero {
     private boolean faceRight;
 
     private Attack currentAttack;
-    public boolean isAttacking;
-    private float attackDuration;
 
     private boolean isHurting;
     private float isHurtingCounter;
@@ -52,8 +50,7 @@ public class Boy extends Hero {
         isAttacking = false;
         isHurting = false ;
         isHurtingCounter = 0.0f;
-
-        attackDuration = 0.0f;
+        isDead = false;
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
         for (int i = 0 ; i < 9 ; i++)
@@ -70,6 +67,7 @@ public class Boy extends Hero {
         setRegion(characterStand);
 
         currentHealth = MAX_HEALTH;
+        name = "Link";
     }
 
     public void update(float dt) {
@@ -113,7 +111,7 @@ public class Boy extends Hero {
             case ATTACKING:
                 region = (TextureRegion)characterAttack.getKeyFrame(stateTimer);
                 if(characterAttack.isAnimationFinished(stateTimer)) {
-                    world.destroyBody(currentAttack.b2body);
+        //            world.destroyBody(currentAttack.b2body);
                     isAttacking = false;
                 }
                 break;
@@ -152,13 +150,11 @@ public class Boy extends Hero {
         if (!isAttacking) {
             stateTimer = 0.0f;
             isAttacking = true;
-            attackDuration = 0.45f;
 
             if (faceRight)
-                currentAttack = new Attack(screen, new Rectangle(body.getPosition().x + 40, body.getPosition().y , 28, 40), gesture);
+                screen.createNewAttack( new Rectangle(body.getPosition().x + 40, body.getPosition().y , 28, 40),isHero, gesture);
             else
-                currentAttack = new Attack(screen, new Rectangle(body.getPosition().x - 40, body.getPosition().y , 28, 40), gesture);
-
+                screen.createNewAttack( new Rectangle(body.getPosition().x - 40, body.getPosition().y , 28, 40),isHero, gesture);
         }
     }
     @Override
