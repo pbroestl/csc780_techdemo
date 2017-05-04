@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.csc780.eppb.tbd.BattleActivity;
 import com.csc780.eppb.tbd.NeetGame;
 import com.csc780.eppb.tbd.battle.EnemyList;
 import com.csc780.eppb.tbd.scenes.Hud;
@@ -29,9 +31,11 @@ import com.csc780.eppb.tbd.sprites.Enemy;
 import com.csc780.eppb.tbd.sprites.EnemyFactory;
 import com.csc780.eppb.tbd.sprites.TestEnemy;
 import com.csc780.eppb.tbd.sprites.Unit;
+import com.csc780.eppb.tbd.tools.Attack;
 import com.csc780.eppb.tbd.tools.WorldContactListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by owner on 4/25/2017.
@@ -39,16 +43,16 @@ import java.util.ArrayList;
 
 public class BattleScreen implements Screen {
 
-    private final float MAX_TURN_TIME = 10.0f;
+    private final float MAX_TURN_TIME = 8.0f;
     private NeetGame neetGame;
     private TextureAtlas atlas;
-    private TextureAtlas enemyAtlus;
     private TextureAtlas hudAtlus;
 
     Texture background;
 
     //temp atlas
     public TextureAtlas bowserAtlas;
+    public BitmapFont font;
 
     //basic gameScreen variables
     private OrthographicCamera gameCam;
@@ -71,15 +75,15 @@ public class BattleScreen implements Screen {
     boolean isNextTurn;
     private Unit boy;
 
-    Unit test;
-    Unit test2;
     ArrayList<Unit> units;
+    ArrayList<Attack> attacks;
 
 
     //Creating the Gameloop
     private float dimDuration;
     private boolean isDimmed;
     private ShapeRenderer dimScreenRenderer;
+    private boolean isVictory;
 
     public float heroTurnTimer;
 
@@ -87,7 +91,6 @@ public class BattleScreen implements Screen {
     public BattleScreen(NeetGame game){
         this.neetGame = game;
         atlas = new TextureAtlas("link.txt");
-//        enemyAtlus = new TextureAtlas("enemy.txt");
         hudAtlus = new TextureAtlas("hud.txt");
         bowserAtlas  = new TextureAtlas("bowser.txt");
 
@@ -103,27 +106,22 @@ public class BattleScreen implements Screen {
 
         createBounds();
 
-//        test = new TestEnemy(this, new Rectangle(400, 200, 150, 150));
-//        test2 = new TestEnemy(this, new Rectangle(400, 300, 200, 200));
-//        boy = new Boy(this, new Rectangle(600,200,0,0));
-
         loadSprites();
-
-
-//        units.add(boy);
-//        units.add(test);
-//        units.add(test2);
-
+        attacks = new ArrayList<Attack>();
         currentUnitTurn = units.get(0); // Unit test
         currentUnitTurn.startTurn();
         isNextTurn = false;
         heroTurnTimer = MAX_TURN_TIME;
 
         dimScreenRenderer = new ShapeRenderer();
-        isDimmed = true;
 
-        hud = new Hud(game.batch, this, units.get(0));
-        hud.setCurrentPlayer("Link");
+        dimDuration =0.0f ;
+        font = new BitmapFont();
+        font.getData().setScale(4,4);
+
+        hud = new Hud(game.batch, this, currentUnitTurn);
+
+        isVictory = false;
     }
 
     private void loadSprites() {
@@ -135,7 +133,6 @@ public class BattleScreen implements Screen {
             float posY = NeetGame.getGameMapInfo().getEnemyList().get(i).getPosition()[1];
             float sizeX = EnemyList.getEnemy(enemyId).getSize()[0];
             float sizeY = EnemyList.getEnemy(enemyId).getSize()[1];
-//            enemies.add(EnemyFactory.getEnemy(enemyId, posX, posY, this));
             units.add(EnemyFactory.getEnemy(enemyId, this, new Rectangle(posX, posY, sizeX, sizeY)));
             Log.d("BattleScreen", EnemyList.getEnemy(enemyId).getName());
         }
@@ -163,6 +160,10 @@ public class BattleScreen implements Screen {
     }
 
     public void update(float dt) {
+        if (units.size() == 1 && !isVictory){
+            isVictory = true;
+        }
+
         if(isNextTurn) {
             units.add(units.remove(0));
             currentUnitTurn = units.get(0);
@@ -173,22 +174,37 @@ public class BattleScreen implements Screen {
                 heroTurnTimer = MAX_TURN_TIME;
             }
         }
+
         //accepting input
         handleInput(dt);
 
         gameCam.update();
         hud.update(dt);
 
-
-      //  boy.update(dt);
-//        test.update(dt);
-//        test2.update(dt);
-        for(Unit unit : units) {
-            unit.update(dt);
+        Iterator<Unit> iter = units.iterator();
+        while(iter.hasNext()) {
+            Unit unit = iter.next();
+            if(!unit.isDead())
+                unit.update(dt);
+            else{
+                if (unit.isTurn())
+                    nextTurn();
+                iter.remove();
+                world.destroyBody(unit.body);
+            }
         }
-        currentUnitTurn.turnUpdate(dt);
- //       dimDuration += dt;
 
+        //updating the attacks set to the world
+        for(Attack attack : attacks) {
+            if (!attack.isAttackFinished())
+                attack.update(dt);
+            else {
+                attacks.remove(attack);
+            }
+        }
+
+        if (!currentUnitTurn.isDying())
+            currentUnitTurn.turnUpdate(dt);
 
         heroTurnTimer -= dt;
         world.step(1/60f, 30, 30);
@@ -210,19 +226,26 @@ public class BattleScreen implements Screen {
         neetGame.batch.begin();
 
         neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH, NeetGame.V_HEIGHT );
-//          test.draw(neetGame.batch);
-//
-//          test2.draw(neetGame.batch);
+
         for(Unit unit : units) {
             unit.draw(neetGame.batch);
         }
 
+        if(isVictory) {
+            dimDuration += delta;
+            dimScreen();
 
+        }
         neetGame.batch.end();
 
         hud.stage.draw();
+        if(isVictory){
+            neetGame.batch.begin();
+            font.draw(neetGame.batch, "Victory", NeetGame.V_WIDTH/2 - 100, NeetGame.V_HEIGHT/2  );
+            neetGame.batch.end();
+        }
         //renderer our Box2DDebugLines
-        b2dr.render(world, gameCam.combined );
+       // b2dr.render(world, gameCam.combined );
 
     }
 
@@ -253,12 +276,12 @@ public class BattleScreen implements Screen {
         hud.dispose();
     }
 
-    public TextureAtlas getAtlas(){
-        return atlas;
+    public void createNewAttack( Rectangle bounds , boolean isHero, String gesture){
+        attacks.add(new Attack(this, bounds, isHero, gesture));
     }
 
-    public TextureAtlas getEnemyAtlus() {
-        return enemyAtlus;
+    public TextureAtlas getAtlas(){
+        return atlas;
     }
 
     public TextureAtlas getHudAtlus() {
@@ -328,19 +351,15 @@ public class BattleScreen implements Screen {
     }
 
     private void dimScreen(){
-        float temp = 0.5f - dimDuration;
-        if (temp >= 0) {
+        float temp = dimDuration;
+        if (temp >= 0.5 )
+            temp = 0.5f ;
             Gdx.gl.glEnable(GL20.GL_BLEND);
             dimScreenRenderer.begin(ShapeRenderer.ShapeType.Filled);
             dimScreenRenderer.setColor(new Color(0, 0, 0, temp));
             dimScreenRenderer.rect(0, 0, gamePort.getScreenWidth() * 2, gamePort.getScreenHeight() * 2);
             dimScreenRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
-        }else {
-            isDimmed = false;
-        }
     }
-
-
 
 }

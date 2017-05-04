@@ -25,10 +25,15 @@ public class Attack extends Sprite {
     protected World world;
     public Body b2body;
 
+    //Saved for initialization of the Attack body
+    private boolean isHero;
+    private Rectangle bounds;
+    private boolean isAttackSet;
 
     //Attack Animation variables
     protected float attackDuration;
-    protected float castDuration;
+    protected boolean isAttackFinished;
+
 
     protected boolean isFixed;
 
@@ -39,42 +44,61 @@ public class Attack extends Sprite {
 
     TextureRegion testSprite;
 
-    public Attack (BattleScreen screen, Rectangle bounds, String gesture){
+    public Attack (BattleScreen screen, Rectangle bounds,  boolean isHero, String gesture){
         this.screen = screen;
         this.world = screen.getWorld();
-        setPosition(bounds.getX(), bounds.getY());
 
-        defineAttack(bounds);
-
-        testSprite = new TextureRegion(screen.getAtlas().findRegion("link_run"), 32 * 3 , 0 , 32 , 32 );
-        setBounds(getX(),getY(), bounds.getWidth(), bounds.getHeight());
-
-        setPosition(b2body.getPosition().x + 20 - getWidth()/2 , b2body.getPosition().y - getHeight() / 2);
-        setRegion(testSprite);
+        isAttackSet = false;
+        this.bounds = bounds;
+        this.isHero = isHero;
+        //Sprite Loading, and setting
+        attackDuration = 0.3f;
 
         setDamage(gesture);
     }
 
+    public void update (float dt) {
+        if(!isAttackSet)
+            initializeAttack();
 
-    protected void defineAttack(Rectangle bounds) {
+        attackDuration -= dt;
+        if(!isAttackFinished && attackDuration <= 0){
+            isAttackFinished  = true;
+            world.destroyBody(b2body);
+        }
+    }
+
+    private void initializeAttack() {
+        setPosition(bounds.getX(), bounds.getY());
+        defineAttack(bounds, isHero);
+        setBounds(getX(),getY(), bounds.getWidth(), bounds.getHeight());
+
+        isAttackSet = true;
+    }
+
+    protected void defineAttack(Rectangle bounds, boolean isHero) {
+
         BodyDef bdef = new BodyDef();
+        FixtureDef fdef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+
         bdef.position.set(getX(), getY() );
         bdef.type = BodyDef.BodyType.DynamicBody;
         bdef.allowSleep = false;
 
         b2body = world.createBody(bdef);
 
-        FixtureDef fdef = new FixtureDef();
-
-
-        PolygonShape shape = new PolygonShape();
-
         shape.setAsBox(bounds.getWidth(),bounds.getHeight());
-
         fdef.shape = shape;
         fdef.isSensor = true;
-        fdef.filter.categoryBits = NeetGame.ATTACK_BIT;
-        fdef.filter.maskBits =  NeetGame.ENEMY_BIT  ;
+
+        if (isHero) {
+            fdef.filter.categoryBits = NeetGame.ATTACK_BIT;
+            fdef.filter.maskBits = NeetGame.ENEMY_BIT;
+        } else {
+            fdef.filter.categoryBits = NeetGame.ENEMYATTACK_BIT;
+            fdef.filter.maskBits =  NeetGame.CHARACTER_BIT;
+        }
 
         b2body.createFixture(fdef).setUserData(this);
     }
@@ -99,6 +123,10 @@ public class Attack extends Sprite {
             default:
                 damage = 0;
         }
+    }
+
+    public boolean isAttackFinished(){
+        return isAttackFinished;
     }
 
     public float getDamage() {

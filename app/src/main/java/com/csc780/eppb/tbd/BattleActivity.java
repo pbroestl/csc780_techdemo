@@ -77,6 +77,14 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
                 showHelpFragmentDialog();
             }
         });
+
+        final Button mRunButton = (Button) findViewById(R.id.buttonRun);
+        mRunButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BattleActivity.super.onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -100,8 +108,6 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
-        } else {
-            super.onBackPressed();
         }
     }
 

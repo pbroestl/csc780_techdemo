@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.csc780.eppb.tbd.screens.BattleScreen;
 import com.csc780.eppb.tbd.tools.Attack;
-import com.csc780.eppb.tbd.tools.EnemyAttack;
+
 
 /**
  * Created by owner on 4/28/2017.
@@ -32,6 +32,7 @@ public class TestEnemy extends Enemy {
         loadAnimations();
 
         isDead = false;
+        isDying = false;
 
         currentState = EnemyState.IDLE;
         previousState = EnemyState.IDLE;
@@ -77,22 +78,19 @@ public class TestEnemy extends Enemy {
         frames.add(new TextureRegion (screen.bowserAtlas.findRegion("bowser_hit"), 0 , 0 , 64 , 64 ));
         frames.add(new TextureRegion (screen.bowserAtlas.findRegion("bowser_hit"), 0 , 0 , 0 , 0 ));
         frames.add(new TextureRegion (screen.bowserAtlas.findRegion("bowser_hit"), 0 , 0 , 64 , 64 ));
+        frames.add(new TextureRegion (screen.bowserAtlas.findRegion("bowser_hit"), 0 , 0 , 0 , 0 ));
+        frames.add(new TextureRegion (screen.bowserAtlas.findRegion("bowser_hit"), 0 , 0 , 64 , 64 ));
         enemyDying = new Animation (0.1f, frames);
         frames.clear();
     }
 
     public void update(float dt) {
+        if(!isDying  && currentHP <= 0 ){
+            isDying = true;
+            stateTimer = 0.0f;
+        }
+
         setRegion(getFrame(dt));
-//        if(isTurn)
-//            enemyAI();
-
-
-
-//        randAttackTimer -= dt ;
-//        if(randAttackTimer <= 0 && !isTargeting) {
-//            createTargetSensor();
-//            isTargeting = true;
-//        }
 
         setPosition(body.getPosition().x  - getWidth()/2, body.getPosition().y - getHeight() / 2);
     }
@@ -102,6 +100,7 @@ public class TestEnemy extends Enemy {
     }
 
     private void enemyAI() {
+
 
         //Initializes the target on the first frame of the Enemy turn
         // Allow a physics step to take place before continuing
@@ -141,24 +140,24 @@ public class TestEnemy extends Enemy {
             body.destroyFixture(rangeSensor);
 
             if (!faceRight)
-                currentAttack = new EnemyAttack(screen, new Rectangle(body.getPosition().x + getWidth() / 2 - 10, body.getPosition().y, 28, 40));
+                screen.createNewAttack( new Rectangle(body.getPosition().x + getWidth() / 4 , body.getPosition().y, 28, getHeight()/2.7f), isHero, "CHECK");
             else
-                currentAttack = new EnemyAttack(screen, new Rectangle(body.getPosition().x - getWidth() / 2 + 10, body.getPosition().y, 28, 40));
+                screen.createNewAttack( new Rectangle(body.getPosition().x - getWidth() / 4 , body.getPosition().y, 28, getHeight()/2.7f), isHero, "CHECK");
             isAttackSet = true;
-
         }
 
     }
     public EnemyState getState(float dt){
 
-
-        if(isHurting) {
+     if (isDying)
+        return EnemyState.DYING;
+     else if(isHurting)
         return EnemyState.HURTING;
-    } else if (isAttacking) {
+     else if (isAttacking)
         return EnemyState.ATTACKING;
-    } else if (body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0 )
+     else if (body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0 )
         return EnemyState.MOVING;
-    else
+     else
         return EnemyState.IDLE;
     }
 
@@ -170,7 +169,7 @@ public class TestEnemy extends Enemy {
             case ATTACKING:
                 region = (TextureRegion)enemyAttack.getKeyFrame(stateTimer);
                 if (enemyAttack.isAnimationFinished(stateTimer)){
-                  world.destroyBody(currentAttack.b2body);
+         //         world.destroyBody(currentAttack.b2body);
                   isAttackSet = false;
                   isAttacking = false;
                     previousTarget = currentTarget;
@@ -186,6 +185,11 @@ public class TestEnemy extends Enemy {
                 region = (TextureRegion) enemyHurt.getKeyFrame(stateTimer);
                 if (enemyHurt.isAnimationFinished(stateTimer))
                     isHurting = false ;
+                break;
+            case DYING:
+                region = (TextureRegion) enemyDying.getKeyFrame(stateTimer);
+                if (enemyDying.isAnimationFinished(stateTimer))
+                    isDead = true;
                 break;
             case IDLE:
             default:
@@ -219,7 +223,7 @@ public class TestEnemy extends Enemy {
     private void calculateDamage(float damage) {
         if((currentHP -= damage) <= 0) {
             currentHP = 0;
-            isDead = true;
+            isDying = true;
         }
         damageTaken = damage;
 
