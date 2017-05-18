@@ -12,7 +12,7 @@
     <string name="text_ap">AP </string>
     <string name="button_end">End turn</string>
     <string name="button_run">Run away</string>
-    <string name="button_help">Help</string>
+    <string name="button_help">\?</string>
 
     <string-array name="list_spells">
         <item>Fire</item>

@@ -1,26 +1,18 @@
 package com.csc780.eppb.tbd.screens;
 
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.opengl.GLES20;
-import android.opengl.GLUtils;
 import android.util.Log;
-import android.widget.LinearLayout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -33,20 +25,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.csc780.eppb.tbd.BattleActivity;
 import com.csc780.eppb.tbd.MapSelectActivity;
 import com.csc780.eppb.tbd.NeetGame;
-import com.csc780.eppb.tbd.R;
 import com.csc780.eppb.tbd.battle.EnemyList;
 import com.csc780.eppb.tbd.scenes.Hud;
 import com.csc780.eppb.tbd.sprites.Boy;
-import com.csc780.eppb.tbd.sprites.Enemy;
 import com.csc780.eppb.tbd.sprites.EnemyFactory;
-import com.csc780.eppb.tbd.sprites.Hero;
-import com.csc780.eppb.tbd.sprites.TestEnemy;
 import com.csc780.eppb.tbd.sprites.Unit;
 import com.csc780.eppb.tbd.tools.Attack;
 import com.csc780.eppb.tbd.tools.WorldContactListener;
@@ -67,6 +51,23 @@ public class BattleScreen implements Screen {
     private TextureAtlas hudAtlus;
 
 //    Texture background;
+
+    Texture base;
+    Texture hourglass;
+    Texture outerRotation;
+    Texture innerRotation;
+    float rotation;
+
+    float hourRotation;
+    float hourTimer;
+    boolean hourPause;
+
+
+    TextureRegion transitionBackground;
+    TextureRegion transitionForeground;
+
+    TextureRegion profileBackground;
+    TextureRegion profileForeground;
 
     //temp atlas
     public TextureAtlas bowserAtlas;
@@ -123,6 +124,20 @@ public class BattleScreen implements Screen {
         parameter.magFilter = Texture.TextureFilter.Linear;
         font = generator.generateFont(parameter);
         generator.dispose();
+
+        hourglass = new Texture("hourglass.png");
+        base = new Texture("base.png");
+        outerRotation = new Texture("outer_rotation.png");
+        innerRotation = new Texture("inner_rotation.png");
+
+        hourPause  = false;
+        hourRotation = 0;
+
+        transitionBackground = new TextureRegion(getHudAtlus().findRegion("transition_background"));
+        transitionForeground = new TextureRegion(getHudAtlus().findRegion("transition_foreground"));
+
+        profileBackground  = new TextureRegion(getHudAtlus().findRegion("profile_background"));
+        profileForeground = new TextureRegion(getHudAtlus().findRegion("profile_foreground"));
 
         gameCam = new OrthographicCamera();
         gamePort = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, gameCam);
@@ -210,6 +225,8 @@ public class BattleScreen implements Screen {
         //accepting input
         handleInput(dt);
 
+        rotation += dt * 100;
+
         gameCam.update();
         hud.update(dt);
 
@@ -239,6 +256,25 @@ public class BattleScreen implements Screen {
             currentUnitTurn.turnUpdate(dt);
 
         heroTurnTimer -= dt;
+
+
+        if(!hourPause) {
+            hourRotation += dt * 300;
+            if (hourRotation >= 180) {
+                hourPause = true;
+                hourRotation = 180;
+            }
+        } else {
+            hourTimer += dt ;
+            if (hourTimer >= 1){
+                hourPause = false;
+                hourTimer = 0 ;
+                hourRotation = 0;
+            }
+        }
+
+
+
         world.step(1/60f, 30, 30);
     }
 
@@ -265,12 +301,24 @@ public class BattleScreen implements Screen {
             dimScreen();
 
         }
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        neetGame.batch.draw(profileBackground, 10 , NeetGame.V_HEIGHT - 110);
+        neetGame.batch.draw(profileForeground, 10 , NeetGame.V_HEIGHT- 110);
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        neetGame.batch.draw(new TextureRegion(base), NeetGame.V_WIDTH - 250, 0, 100,100 ,200, 200 , 1f , 1f , 0);
+        neetGame.batch.draw(new TextureRegion(innerRotation), NeetGame.V_WIDTH - 250, 0, 100, 100, 200, 200 , 1f , 1f, -rotation);
+        neetGame.batch.draw(new TextureRegion(outerRotation), NeetGame.V_WIDTH - 250, 0, 100, 100, 200, 200 , 1f , 1f , rotation);
+        neetGame.batch.draw(new TextureRegion(hourglass), NeetGame.V_WIDTH - 250, 0, 100 ,100 , 200, 200, 0.75f, .75f, -hourRotation);
+
         neetGame.batch.end();
 
         hud.stage.draw();
         if(isVictory){
             neetGame.batch.begin();
-            font.draw(neetGame.batch, "Victory", NeetGame.V_WIDTH/2 - 100, NeetGame.V_HEIGHT/2  );
+            neetGame.batch.draw(transitionBackground, NeetGame.V_WIDTH/2 -300, NeetGame.V_HEIGHT/2 - 100 );
+            font.draw(neetGame.batch, "Victory", NeetGame.V_WIDTH/2 - 80, NeetGame.V_HEIGHT/2 + 20  );
+            neetGame.batch.draw(transitionForeground, NeetGame.V_WIDTH/2 - 300, NeetGame.V_HEIGHT/2 - 100);
             neetGame.batch.end();
         }
 

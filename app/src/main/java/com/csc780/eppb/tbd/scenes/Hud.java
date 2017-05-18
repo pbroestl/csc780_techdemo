@@ -114,13 +114,14 @@ public class Hud implements Disposable {
         comboCount = new Label(String.format(Locale.ENGLISH, "%3d", combo), new Label.LabelStyle(font, Color.WHITE));
 
         table.top();
-        table.add(mapDifficultyText).expandX().left().pad(10);
+        table.add(mapDifficultyText).expandX().left().padLeft(10);
         table.add(comboText).expandX().right().pad(5);
         table.add(comboCount).right().pad(5);
         table.row();
-        healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_bar"));
+
+        healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_empty"));
         healthBarSprite = new Sprite(healthBar);
-        healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_fill"));
+        healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_full"));
         healthFillSprite = new Sprite(healthFill);
         Image healthBarImg = new Image(healthBarSprite);
         healthFillImg = new Image(healthFillSprite);
