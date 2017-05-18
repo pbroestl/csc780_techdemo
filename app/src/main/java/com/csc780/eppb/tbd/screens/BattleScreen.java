@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -49,6 +50,23 @@ public class BattleScreen implements Screen {
     private TextureAtlas hudAtlus;
 
     Texture background;
+
+    Texture base;
+    Texture hourglass;
+    Texture outerRotation;
+    Texture innerRotation;
+    float rotation;
+
+    float hourRotation;
+    float hourTimer;
+    boolean hourPause;
+
+
+    TextureRegion transitionBackground;
+    TextureRegion transitionForeground;
+
+    TextureRegion profileBackground;
+    TextureRegion profileForeground;
 
     //temp atlas
     public TextureAtlas bowserAtlas;
@@ -96,6 +114,20 @@ public class BattleScreen implements Screen {
 
         background = new Texture("forest2.png");
 
+        hourglass = new Texture("hourglass.png");
+        base = new Texture("base.png");
+        outerRotation = new Texture("outer_rotation.png");
+        innerRotation = new Texture("inner_rotation.png");
+
+        hourPause  = false;
+        hourRotation = 0;
+
+        transitionBackground = new TextureRegion(getHudAtlus().findRegion("transition_background"));
+        transitionForeground = new TextureRegion(getHudAtlus().findRegion("transition_foreground"));
+
+        profileBackground  = new TextureRegion(getHudAtlus().findRegion("profile_background"));
+        profileForeground = new TextureRegion(getHudAtlus().findRegion("profile_foreground"));
+
         gameCam = new OrthographicCamera();
         gamePort = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, gameCam);
         gameCam.position.set(gamePort.getWorldWidth() /2, gamePort.getWorldHeight() /2, 0);
@@ -117,7 +149,7 @@ public class BattleScreen implements Screen {
 
         dimDuration =0.0f ;
         font = new BitmapFont();
-        font.getData().setScale(4,4);
+        font.getData().setScale(3,3);
 
         hud = new Hud(game.batch, this, currentUnitTurn);
 
@@ -178,6 +210,8 @@ public class BattleScreen implements Screen {
         //accepting input
         handleInput(dt);
 
+        rotation += dt * 100;
+
         gameCam.update();
         hud.update(dt);
 
@@ -207,6 +241,25 @@ public class BattleScreen implements Screen {
             currentUnitTurn.turnUpdate(dt);
 
         heroTurnTimer -= dt;
+
+
+        if(!hourPause) {
+            hourRotation += dt * 300;
+            if (hourRotation >= 180) {
+                hourPause = true;
+                hourRotation = 180;
+            }
+        } else {
+            hourTimer += dt ;
+            if (hourTimer >= 1){
+                hourPause = false;
+                hourTimer = 0 ;
+                hourRotation = 0;
+            }
+        }
+
+
+
         world.step(1/60f, 30, 30);
     }
 
@@ -225,7 +278,7 @@ public class BattleScreen implements Screen {
 
         neetGame.batch.begin();
 
-        neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH, NeetGame.V_HEIGHT );
+     //   neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH, NeetGame.V_HEIGHT );
 
         for(Unit unit : units) {
             unit.draw(neetGame.batch);
@@ -236,12 +289,24 @@ public class BattleScreen implements Screen {
             dimScreen();
 
         }
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        neetGame.batch.draw(profileBackground, 10 , NeetGame.V_HEIGHT - 110);
+        neetGame.batch.draw(profileForeground, 10 , NeetGame.V_HEIGHT- 110);
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        neetGame.batch.draw(new TextureRegion(base), NeetGame.V_WIDTH - 250, 0, 100,100 ,200, 200 , 1f , 1f , 0);
+        neetGame.batch.draw(new TextureRegion(innerRotation), NeetGame.V_WIDTH - 250, 0, 100, 100, 200, 200 , 1f , 1f, -rotation);
+        neetGame.batch.draw(new TextureRegion(outerRotation), NeetGame.V_WIDTH - 250, 0, 100, 100, 200, 200 , 1f , 1f , rotation);
+        neetGame.batch.draw(new TextureRegion(hourglass), NeetGame.V_WIDTH - 250, 0, 100 ,100 , 200, 200, 0.75f, .75f, -hourRotation);
+
         neetGame.batch.end();
 
         hud.stage.draw();
         if(isVictory){
             neetGame.batch.begin();
-            font.draw(neetGame.batch, "Victory", NeetGame.V_WIDTH/2 - 100, NeetGame.V_HEIGHT/2  );
+            neetGame.batch.draw(transitionBackground, NeetGame.V_WIDTH/2 -300, NeetGame.V_HEIGHT/2 - 100 );
+            font.draw(neetGame.batch, "Victory", NeetGame.V_WIDTH/2 - 80, NeetGame.V_HEIGHT/2 + 20  );
+            neetGame.batch.draw(transitionForeground, NeetGame.V_WIDTH/2 - 300, NeetGame.V_HEIGHT/2 - 100);
             neetGame.batch.end();
         }
         //renderer our Box2DDebugLines

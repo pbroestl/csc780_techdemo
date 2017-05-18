@@ -1,0 +1,76 @@
+
+hud.png
+size: 1008,508
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+base
+  rotate: false
+  xy: 604, 306
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+health_empty
+  rotate: false
+  xy: 606, 82
+  size: 100, 20
+  orig: 100, 20
+  offset: 0, 0
+  index: -1
+health_full
+  rotate: false
+  xy: 606, 60
+  size: 100, 20
+  orig: 100, 20
+  offset: 0, 0
+  index: -1
+hourglass
+  rotate: false
+  xy: 604, 104
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+inner_rotation
+  rotate: false
+  xy: 806, 306
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+outer_rotation
+  rotate: false
+  xy: 806, 104
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+profile_background
+  rotate: false
+  xy: 2, 2
+  size: 300, 100
+  orig: 300, 100
+  offset: 0, 0
+  index: -1
+profile_foreground
+  rotate: false
+  xy: 304, 2
+  size: 300, 100
+  orig: 300, 100
+  offset: 0, 0
+  index: -1
+transition_background
+  rotate: false
+  xy: 2, 306
+  size: 600, 200
+  orig: 600, 200
+  offset: 0, 0
+  index: -1
+transition_foreground
+  rotate: false
+  xy: 2, 104
+  size: 600, 200
+  orig: 600, 200
+  offset: 0, 0
+  index: -1

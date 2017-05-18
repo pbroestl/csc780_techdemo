@@ -19,7 +19,9 @@
         android:layout_height="wrap_content"
         android:text="@string/button_run"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/buttonHelp" />
+        android:layout_toStartOf="@+id/buttonHelp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight = "200dp"/>
 
     <Button
         android:id="@+id/buttonHelp"
@@ -27,7 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/buttonRun"
-        android:text="@string/button_help" />
+        android:text="@string/button_help"
+        android:visibility="gone"/>
 
 </RelativeLayout>
 

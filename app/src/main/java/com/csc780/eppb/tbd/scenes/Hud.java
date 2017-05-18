@@ -126,9 +126,9 @@ public class Hud implements Disposable {
 //        table.add(currentPlayerText).expandX().left().padLeft(10);
 //        table.row();
 //        table.add(hpText).expandX().left().padLeft(10);
-        healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_bar"));
+        healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_empty"));
         healthBarSprite = new Sprite(healthBar);
-        healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_fill"));
+        healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_full"));
         healthFillSprite = new Sprite(healthFill);
         Image healthBarImg = new Image(healthBarSprite);
         healthFillImg = new Image(healthFillSprite);
