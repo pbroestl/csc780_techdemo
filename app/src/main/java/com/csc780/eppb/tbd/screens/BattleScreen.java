@@ -121,7 +121,7 @@ public class BattleScreen implements Screen {
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("trench100free.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 60;
+        parameter.size = 35;
         parameter.borderColor = Color.BLACK;
         parameter.borderWidth = 2;
         parameter.minFilter = Texture.TextureFilter.Linear;
