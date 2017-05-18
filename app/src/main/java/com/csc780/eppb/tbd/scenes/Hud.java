@@ -79,7 +79,7 @@ public class Hud implements Disposable {
         BitmapFont font = generator.generateFont(parameter);
         generator.dispose();
 
-        attackTimer = 10.00f;
+        attackTimer = 8.00f;
 
         timeCount = 0;
         combo = 0;
@@ -110,13 +110,11 @@ public class Hud implements Disposable {
                 new Label.LabelStyle(font, Color.WHITE));
         attackTimerText = new Label("TIME", new Label.LabelStyle(font, Color.WHITE));
         attackTimerCount = new Label(String.format(Locale.ENGLISH, "%.2f", attackTimer), new Label.LabelStyle(font, Color.WHITE));
-        comboText = new Label("COMBO", new Label.LabelStyle(font, Color.WHITE));
-        comboCount = new Label(String.format(Locale.ENGLISH, "%3d", combo), new Label.LabelStyle(font, Color.WHITE));
+        comboText = new Label(String.format(Locale.ENGLISH, "COMBO %2d", combo), new Label.LabelStyle(font, Color.WHITE));
+//        comboCount = new Label(String.format(Locale.ENGLISH, "%3d", combo), new Label.LabelStyle(font, Color.WHITE));
 
         table.top();
-        table.add(mapDifficultyText).expandX().left().padLeft(10);
-        table.add(comboText).expandX().right().pad(5);
-        table.add(comboCount).right().pad(5);
+        table.add(mapDifficultyText).expandX().left().pad(10);
         table.row();
 
         healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_empty"));
@@ -125,8 +123,8 @@ public class Hud implements Disposable {
         healthFillSprite = new Sprite(healthFill);
         Image healthBarImg = new Image(healthBarSprite);
         healthFillImg = new Image(healthFillSprite);
-        healthBarImg.setScale(2f, 1);
-        healthFillImg.setScale(2f, 1);
+        healthBarImg.setScale(1f, 1);
+        healthFillImg.setScale(1f, 1);
         healthMaxWidth = healthFillImg.getWidth();
         Log.v("Hud", ""+healthFillImg.getWidth());
         Stack stack = new Stack();
@@ -134,9 +132,15 @@ public class Hud implements Disposable {
         stack.add(healthBarImg);
 
 
-        table.add(stack).expandX().left().pad(10);
-        table.add(attackTimerText).expandX().right().padRight(20);
-        table.add(attackTimerCount).right().padTop(5);
+        table.add(stack).expandX().left().padLeft(130);
+
+
+        table.row();
+        table.add(comboText).left().padLeft(130).padTop(10);
+//        table.add(comboCount).padLeft(5);
+
+        table.row();
+        table.add(attackTimerCount).right().expandY().bottom().padRight(5);
 
         stage.addActor(joypad);
         stage.addActor(table);
@@ -159,7 +163,8 @@ public class Hud implements Disposable {
         if(!player.isTurn()) {
             attackTimer = 8.0f;
             combo = 0;
-            comboCount.setText(String.format(Locale.ENGLISH, "%3d", combo));
+
+            comboText.setText(String.format("COMBO %2d", combo));
             return;
         }
 
@@ -197,7 +202,7 @@ public class Hud implements Disposable {
             return;
         combo++;
         updateHealth();
-        comboCount.setText(String.format("%3d", combo));
+        comboText.setText(String.format("COMBO %2d", combo));
     }
 
 }

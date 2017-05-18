@@ -100,10 +100,14 @@ public class BattleScreen implements Screen {
 
     //Creating the Gameloop
     private float dimDuration;
-    private boolean isDimmed;
     private ShapeRenderer dimScreenRenderer;
     private boolean isVictory;
     private boolean isGameOver;
+
+    private boolean isTransition;
+    private float transitionDuration;
+
+    private boolean isPaused;
 
     public float heroTurnTimer;
 
@@ -151,10 +155,15 @@ public class BattleScreen implements Screen {
 
         loadSprites();
         attacks = new ArrayList<Attack>();
+        isNextTurn = true;
         currentUnitTurn = units.get(0); // Unit test
         currentUnitTurn.startTurn();
         isNextTurn = false;
         heroTurnTimer = MAX_TURN_TIME;
+        isPaused = true;
+        isTransition = true;
+        transitionDuration = 1.0f;
+
 
         dimScreenRenderer = new ShapeRenderer();
 
@@ -211,7 +220,7 @@ public class BattleScreen implements Screen {
             isVictory = true;
         }
 
-        if(isNextTurn) {
+        if(isNextTurn && !isVictory) {
             units.add(units.remove(0));
             currentUnitTurn = units.get(0);
             currentUnitTurn.startTurn();
@@ -220,6 +229,18 @@ public class BattleScreen implements Screen {
             if (currentUnitTurn.isHero()){
                 heroTurnTimer = MAX_TURN_TIME;
             }
+
+            isTransition = true;
+            transitionDuration = 1.0f;
+
+        }
+
+        if(isTransition){
+            if(transitionDuration <= 0){
+                isTransition = false;
+                isPaused = false;
+            }
+            transitionDuration -= dt;
         }
 
         //accepting input
@@ -252,12 +273,17 @@ public class BattleScreen implements Screen {
             }
         }
 
-        if (!currentUnitTurn.isDying())
+        if(isTransition && ! isPaused)
+            isPaused = true;
+
+        if (!currentUnitTurn.isDying() && !isPaused)
             currentUnitTurn.turnUpdate(dt);
 
-        heroTurnTimer -= dt;
+        if(!isPaused)
+         heroTurnTimer -= dt;
 
 
+        // spinning Time Animation
         if(!hourPause) {
             hourRotation += dt * 300;
             if (hourRotation >= 180) {
@@ -296,11 +322,6 @@ public class BattleScreen implements Screen {
             unit.draw(neetGame.batch);
         }
 
-        if(isVictory || isGameOver) {
-            dimDuration += delta;
-            dimScreen();
-
-        }
         Gdx.gl.glEnable(GL20.GL_BLEND);
         neetGame.batch.draw(profileBackground, 10 , NeetGame.V_HEIGHT - 110);
         neetGame.batch.draw(profileForeground, 10 , NeetGame.V_HEIGHT- 110);
@@ -314,6 +335,15 @@ public class BattleScreen implements Screen {
         neetGame.batch.end();
 
         hud.stage.draw();
+
+        if(isTransition){
+            neetGame.batch.begin();
+            neetGame.batch.draw(transitionBackground, NeetGame.V_WIDTH/2 -300, NeetGame.V_HEIGHT/2 - 100 );
+            font.draw(neetGame.batch, currentUnitTurn.getName() + "'s Turn", NeetGame.V_WIDTH/2 - 100, NeetGame.V_HEIGHT/2 + 10  );
+            neetGame.batch.draw(transitionForeground, NeetGame.V_WIDTH/2 - 300, NeetGame.V_HEIGHT/2 - 100);
+            neetGame.batch.end();
+        }
+
         if(isVictory){
             neetGame.batch.begin();
             neetGame.batch.draw(transitionBackground, NeetGame.V_WIDTH/2 -300, NeetGame.V_HEIGHT/2 - 100 );
@@ -379,8 +409,9 @@ public class BattleScreen implements Screen {
         return world;
     }
 
+    public boolean isPaused() {return isPaused;}
+
     public void addCombo(){
-        isDimmed = true;
         dimDuration = 0.0f;
         hud.addCombo();
     }

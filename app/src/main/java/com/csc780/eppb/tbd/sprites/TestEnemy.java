@@ -85,6 +85,9 @@ public class TestEnemy extends Enemy {
     }
 
     public void update(float dt) {
+        if(screen.isPaused())
+            return;
+
         if(!isDying  && currentHP <= 0 ){
             isDying = true;
             stateTimer = 0.0f;

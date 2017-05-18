@@ -71,7 +71,6 @@ public abstract class Enemy extends Unit {
 
     // Fields shared between all enemies
     private int id;
-    private String name;
     private int maxHp;
     private int def;
 //    private String element;

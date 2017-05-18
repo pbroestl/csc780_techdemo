@@ -22,6 +22,7 @@ public abstract class Hero extends Unit {
         defineBody(bounds);
 
         isHero = true;
+        name = "Player";
     }
 
     public void setCatagoryFilter(short filterBit ) {
