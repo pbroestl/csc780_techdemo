@@ -80,4 +80,6 @@ import com.csc780.eppb.tbd.screens.BattleScreen;
 
         public boolean isAttacking() { return isAttacking;}
 
+        public String getName (){ return name; }
+
 }

@@ -71,6 +71,9 @@ public class Boy extends Hero {
     }
 
     public void update(float dt) {
+        if(screen.isPaused())
+            return;
+
         setRegion(getFrame(dt));
 //        if(screen.heroTurnTimer <= 0)
 //            endTurn();
