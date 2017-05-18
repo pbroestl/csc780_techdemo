@@ -1,5 +1,6 @@
 /build
 /assets/temp
+/src/main/res_temp
 /libs/arm64-v8a
 /libs/armeabi
 /libs/armeabi-v7a

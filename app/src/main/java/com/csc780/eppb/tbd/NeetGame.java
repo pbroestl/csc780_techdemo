@@ -3,6 +3,7 @@ package com.csc780.eppb.tbd;
 import android.view.MotionEvent;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.csc780.eppb.tbd.battle.Map;
 import com.csc780.eppb.tbd.screens.BattleScreen;
@@ -34,14 +35,16 @@ public class NeetGame extends Game {
     public SpriteBatch batch ;
 
     private static Map map;
+    private AndroidApplication activity;
 
     public NeetGame() {
         super();
     }
 
-    public NeetGame(Map map) {
+    public NeetGame(Map map, AndroidApplication activity) {
         super();
         NeetGame.map = map;
+        this.activity = activity;
     }
 
     @Override
@@ -65,6 +68,10 @@ public class NeetGame extends Game {
 
     public void setAttack(String gesture) {
         screen.setAttack(gesture);
+    }
+
+    public AndroidApplication getActivity() {
+        return activity;
     }
 
 }

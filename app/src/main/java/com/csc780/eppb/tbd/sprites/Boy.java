@@ -18,9 +18,10 @@ public class Boy extends Hero {
     private TextureRegion characterStand;
     private Animation characterRun;
     private Animation characterAttack;
+    private Animation characterDying;
     private TextureRegion characterHurt;
 
-    public enum PlayerState {STANDING, RUNNING, ATTACKING, HURTING};
+    public enum PlayerState {STANDING, RUNNING, ATTACKING, HURTING, DYING};
     private PlayerState currentState;
     private PlayerState previousState;
     private boolean faceRight;
@@ -60,6 +61,11 @@ public class Boy extends Hero {
         for (int i = 0 ; i < 7 ; i++)
             frames.add(new TextureRegion(screen.getAtlas().findRegion("link_run"), i * 32, 0, 32, 32 ));
         characterRun = new Animation(0.05f, frames);
+        frames.clear();
+        for (int i = 0; i < 3; i++)
+            frames.add(new TextureRegion(screen.getDeadAtlas().findRegion("linkdead-1"), i * 26, 0, 26, 27));
+        characterDying = new Animation(0.5f, frames);
+        frames.clear();
 
         characterStand = new TextureRegion (screen.getAtlas().findRegion("link_run"), 32 * 3 , 0 , 32 , 32 );
         characterHurt = new TextureRegion (screen.getAtlas().findRegion("link_run"), 32 * 3 , 0 , 32 , 32 );
@@ -94,7 +100,8 @@ public class Boy extends Hero {
                 isHurting = false;
             }
             return PlayerState.HURTING;
-
+        } else if(isDying) {
+            return PlayerState.DYING;
         } else if (isAttacking) {
             return PlayerState.ATTACKING;
         } else if(body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0)
@@ -121,6 +128,13 @@ public class Boy extends Hero {
             case HURTING:
                 this.setColor(1,0,0,1);
                 region = characterStand;
+                break;
+            case DYING:
+                region = (TextureRegion) characterDying.getKeyFrame(stateTimer);
+                if (characterDying.isAnimationFinished(stateTimer)) {
+                    isDead = true;
+                    screen.setGameOver();
+                }
                 break;
             case STANDING:
             default:
@@ -160,11 +174,16 @@ public class Boy extends Hero {
     @Override
     public void onAttackHit() {
         Log.v("hit", "Player Hit health: " + currentHealth);
-        if((currentHealth -= 5) < 0 )
-            currentHealth = 0;
         isHurtingCounter = 0.25f;
         isHurting = true;
+        calculateDamage(15.0f);
+    }
 
+    public void calculateDamage(float damage) {
+        if((currentHealth -= damage) <= 0) {
+            currentHealth = 0;
+            isDying = true;
+        }
     }
 
     public float getCurrentHealth() {

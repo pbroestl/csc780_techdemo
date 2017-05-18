@@ -1,16 +1,27 @@
 package com.csc780.eppb.tbd.screens;
 
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -22,13 +33,19 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.csc780.eppb.tbd.BattleActivity;
+import com.csc780.eppb.tbd.MapSelectActivity;
 import com.csc780.eppb.tbd.NeetGame;
+import com.csc780.eppb.tbd.R;
 import com.csc780.eppb.tbd.battle.EnemyList;
 import com.csc780.eppb.tbd.scenes.Hud;
 import com.csc780.eppb.tbd.sprites.Boy;
 import com.csc780.eppb.tbd.sprites.Enemy;
 import com.csc780.eppb.tbd.sprites.EnemyFactory;
+import com.csc780.eppb.tbd.sprites.Hero;
 import com.csc780.eppb.tbd.sprites.TestEnemy;
 import com.csc780.eppb.tbd.sprites.Unit;
 import com.csc780.eppb.tbd.tools.Attack;
@@ -46,9 +63,10 @@ public class BattleScreen implements Screen {
     private final float MAX_TURN_TIME = 8.0f;
     private NeetGame neetGame;
     private TextureAtlas atlas;
+    private TextureAtlas deadAtlas;
     private TextureAtlas hudAtlus;
 
-    Texture background;
+//    Texture background;
 
     //temp atlas
     public TextureAtlas bowserAtlas;
@@ -84,6 +102,7 @@ public class BattleScreen implements Screen {
     private boolean isDimmed;
     private ShapeRenderer dimScreenRenderer;
     private boolean isVictory;
+    private boolean isGameOver;
 
     public float heroTurnTimer;
 
@@ -91,10 +110,19 @@ public class BattleScreen implements Screen {
     public BattleScreen(NeetGame game){
         this.neetGame = game;
         atlas = new TextureAtlas("link.txt");
+        deadAtlas = new TextureAtlas("link_dead.txt");
         hudAtlus = new TextureAtlas("hud.txt");
         bowserAtlas  = new TextureAtlas("bowser.txt");
 
-        background = new Texture("forest2.png");
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("trench100free.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 60;
+        parameter.borderColor = Color.BLACK;
+        parameter.borderWidth = 2;
+        parameter.minFilter = Texture.TextureFilter.Linear;
+        parameter.magFilter = Texture.TextureFilter.Linear;
+        font = generator.generateFont(parameter);
+        generator.dispose();
 
         gameCam = new OrthographicCamera();
         gamePort = new FitViewport(NeetGame.V_WIDTH, NeetGame.V_HEIGHT, gameCam);
@@ -116,12 +144,11 @@ public class BattleScreen implements Screen {
         dimScreenRenderer = new ShapeRenderer();
 
         dimDuration =0.0f ;
-        font = new BitmapFont();
-        font.getData().setScale(4,4);
 
         hud = new Hud(game.batch, this, currentUnitTurn);
 
         isVictory = false;
+        isGameOver = false;
     }
 
     private void loadSprites() {
@@ -144,6 +171,11 @@ public class BattleScreen implements Screen {
     }
 
     public void handleInput (float dt){
+        if(Gdx.input.isTouched() && (isVictory || isGameOver)) {
+            Intent intent = new Intent(neetGame.getActivity(), MapSelectActivity.class);
+            neetGame.getActivity().startActivity(intent);
+        }
+
         if (currentUnitTurn.isHero()) {
             if(Gdx.input.isTouched() && heroTurnTimer >= 0.0) {
                 position.set(currentUnitTurn.body.getPosition().x, currentUnitTurn.body.getPosition().y);
@@ -215,8 +247,7 @@ public class BattleScreen implements Screen {
         update(delta);
 
 
-        Gdx.gl.glClearColor(0,0,0, 1);
-
+        Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -225,13 +256,11 @@ public class BattleScreen implements Screen {
 
         neetGame.batch.begin();
 
-        neetGame.batch.draw(background, 0, 0, NeetGame.V_WIDTH, NeetGame.V_HEIGHT );
-
         for(Unit unit : units) {
             unit.draw(neetGame.batch);
         }
 
-        if(isVictory) {
+        if(isVictory || isGameOver) {
             dimDuration += delta;
             dimScreen();
 
@@ -242,6 +271,12 @@ public class BattleScreen implements Screen {
         if(isVictory){
             neetGame.batch.begin();
             font.draw(neetGame.batch, "Victory", NeetGame.V_WIDTH/2 - 100, NeetGame.V_HEIGHT/2  );
+            neetGame.batch.end();
+        }
+
+        if(isGameOver) {
+            neetGame.batch.begin();
+            font.draw(neetGame.batch, "Game Over", NeetGame.V_WIDTH/2 - 100, NeetGame.V_HEIGHT/2  );
             neetGame.batch.end();
         }
         //renderer our Box2DDebugLines
@@ -286,6 +321,10 @@ public class BattleScreen implements Screen {
 
     public TextureAtlas getHudAtlus() {
         return hudAtlus;
+    }
+
+    public TextureAtlas getDeadAtlas() {
+        return deadAtlas;
     }
 
     public World getWorld () {
@@ -360,6 +399,10 @@ public class BattleScreen implements Screen {
             dimScreenRenderer.rect(0, 0, gamePort.getScreenWidth() * 2, gamePort.getScreenHeight() * 2);
             dimScreenRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
+    public void setGameOver() {
+        isGameOver = true;
     }
 
 }

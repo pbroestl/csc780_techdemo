@@ -73,7 +73,7 @@ public class Hud implements Disposable {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 16;
         parameter.borderColor = Color.BLACK;
-        parameter.borderWidth = 2;
+        parameter.borderWidth = 0.5f;
         parameter.minFilter = Texture.TextureFilter.Linear;
         parameter.magFilter = Texture.TextureFilter.Linear;
         BitmapFont font = generator.generateFont(parameter);
@@ -105,14 +105,9 @@ public class Hud implements Disposable {
         Table table = new Table();
         table.setFillParent(true);
 
-//        currentPlayerText = new Label("PLAYER", new Label.LabelStyle(font, Color.WHITE));
-//        currentPlayerText.setText(String.format(Locale.ENGLISH, "%3s's Turn", ((Boy) player).getName()));
         mapDifficultyText = new Label(String.format(
                 Locale.ENGLISH, "%s", NeetGame.getGameMapInfo().getDifficulty().toUpperCase()),
                 new Label.LabelStyle(font, Color.WHITE));
-//        hpText = new Label(String.format(
-//                Locale.ENGLISH, "HP %1f/%1f", health, MAX_HEALTH),
-//                new Label.LabelStyle(font, Color.WHITE));
         attackTimerText = new Label("TIME", new Label.LabelStyle(font, Color.WHITE));
         attackTimerCount = new Label(String.format(Locale.ENGLISH, "%.2f", attackTimer), new Label.LabelStyle(font, Color.WHITE));
         comboText = new Label("COMBO", new Label.LabelStyle(font, Color.WHITE));
@@ -123,9 +118,6 @@ public class Hud implements Disposable {
         table.add(comboText).expandX().right().pad(5);
         table.add(comboCount).right().pad(5);
         table.row();
-//        table.add(currentPlayerText).expandX().left().padLeft(10);
-//        table.row();
-//        table.add(hpText).expandX().left().padLeft(10);
         healthBar = new TextureRegion(screen.getHudAtlus().findRegion("health_bar"));
         healthBarSprite = new Sprite(healthBar);
         healthFill = new TextureRegion(screen.getHudAtlus().findRegion("health_fill"));
@@ -166,7 +158,7 @@ public class Hud implements Disposable {
         if(!player.isTurn()) {
             attackTimer = 8.0f;
             combo = 0;
-            comboCount.setText(String.format("%3d", combo));
+            comboCount.setText(String.format(Locale.ENGLISH, "%3d", combo));
             return;
         }
 
@@ -176,7 +168,7 @@ public class Hud implements Disposable {
         if((attackTimer -= dt) < 0.0f)
             attackTimer = 0.0f;
 
-        attackTimerCount.setText(String.format("%.2f", attackTimer));
+        attackTimerCount.setText(String.format(Locale.ENGLISH, "%.2f", attackTimer));
     }
 
 

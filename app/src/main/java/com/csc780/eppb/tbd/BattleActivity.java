@@ -7,16 +7,25 @@ import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.Prediction;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.csc780.eppb.tbd.battle.Map;
 import com.csc780.eppb.tbd.battle.MapList;
 
@@ -44,11 +53,30 @@ public class BattleActivity extends AndroidApplication implements OnGesturePerfo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battle);
+
+        Glide.with(this).load(R.drawable.circuit).asBitmap().into(
+                new SimpleTarget<Bitmap>(1024, 560) {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
+                        RelativeLayout background = (RelativeLayout) findViewById(R.id.layoutBattleInterface);
+                        background.setBackground(new BitmapDrawable(getResources(), bitmap));
+                    }
+                }
+        );
+
+        AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
+        cfg.r = cfg.g = cfg.b = cfg.a = 8;
+
         Map map = MapList.getMap(this.getIntent().getStringExtra("difficulty"));
-        game = new NeetGame(map);
+        game = new NeetGame(map, this);
 
         RelativeLayout uiView = (RelativeLayout) findViewById(R.id.layoutBattleInterface);
-        gameView = initializeForView(game);
+        gameView = initializeForView(game, cfg);
+        if (graphics.getView() instanceof SurfaceView) {
+            SurfaceView glView = (SurfaceView) graphics.getView();
+            glView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+            glView.setZOrderOnTop(true);
+        }
         uiView.addView(gameView, 0);
 
         skillsBoy = GestureLibraries.fromRawResource(this, R.raw.gestures);

@@ -22,13 +22,20 @@ android {
 //            java.srcDirs = ['src']
 //            aidl.srcDirs = ['src']
 //            renderscript.srcDirs = ['src']
-//            res.srcDirs = ['res']
+            res.srcDirs = [
+                    'src/main/res_temp',
+                    'src/main/res'
+            ]
             assets.srcDirs = ['assets/temp', 'assets']
             jniLibs.srcDirs = ['libs']
         }
 
         instrumentTest.setRoot('tests')
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -41,6 +48,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.github.bumptech.glide:glide:3.8.0'
+    compile 'com.android.support:support-v4:25.3.1'
 }
 
 // called every time gradle gets executed, takes the native dependencies of

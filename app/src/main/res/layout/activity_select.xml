@@ -1,33 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutMapSelection"
+    android:id="@+id/layoutMapSelectionBg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:backgroundTint="@android:color/holo_blue_bright"
+    android:backgroundTintMode="multiply"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/selectEasy"
-        android:layout_width="300dp"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/layoutMapSelection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/selectEasy"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="25dp"
+            android:layout_marginStart="-5dp"
+            android:background="@drawable/button"
+            android:text="@string/button_map_select_1"
+            android:textAppearance="@android:style/TextAppearance.Material.Button"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/selectMed"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="25dp"
+            android:layout_marginStart="-5dp"
+            android:background="@drawable/button"
+            android:text="@string/button_map_select_2"
+            android:textAppearance="@android:style/TextAppearance.Material.Button"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/selectHard"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:layout_marginStart="-5dp"
+            android:background="@drawable/button"
+            android:text="@string/button_map_select_3"
+            android:textAppearance="@android:style/TextAppearance.Material.Button"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/button_map_select_1"
-        android:textAppearance="@android:style/TextAppearance.Material.Button" />
-
-    <Button
-        android:id="@+id/selectMed"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/button_map_select_2"
-        android:textAppearance="@android:style/TextAppearance.Material.Button" />
-
-    <Button
-        android:id="@+id/selectHard"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/button_map_select_3"
-        android:textAppearance="@android:style/TextAppearance.Material.Button" />
-
+        android:layout_weight="0.5"
+        android:text="Select a map difficulty"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 </LinearLayout>
